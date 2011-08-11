@@ -20,3 +20,4 @@ gem 'plist', '~> 3.1.0'
 gem 'mirrored', '~> 0.1.3', require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
 
 #   https://github.com/philnash/bitly (Unfold bit.ly links...)
+#   https://rubygems.org/gems/tagometer (Suggest tags...)
