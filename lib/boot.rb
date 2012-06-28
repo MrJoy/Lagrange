@@ -23,8 +23,8 @@ require 'lagrange/monkeypatches'
 
 
 module Lagrange
-  VERSION="0.0.1".freeze
-  RELEASE_DATE="2011-08-02".freeze
+  VERSION="0.0.2".freeze
+  RELEASE_DATE="2012-06-13".freeze
 
   def self.repository
     # TODO: This is rather OSX-specific...  *cough*
@@ -122,7 +122,7 @@ module Lagrange
 
   def self.show_version_info
     $stderr.puts("Lagrange version #{VERSION}, #{RELEASE_DATE}")
-    $stderr.puts("(C)Copyright 2011, MrJoy, Inc.")
+    $stderr.puts("(C)Copyright 2011-2012, Jon Frisby.")
   end
 
   attr_accessor :clint, :toolname, :usage_messages, :help_messages
