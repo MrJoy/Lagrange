@@ -46,23 +46,18 @@ cli.add_usage_form(:snapshot, {
 exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options
 
-import_file = OPTIONS[:import]
-import_as = OPTIONS[:as]
-defer = OPTIONS[:defer]
-snapshot = OPTIONS[:snapshot]
-delete = OPTIONS[:delete]
+misc_dir = Lagrange.interface_directory(Lagrange::Interface::MiscURL::INTERFACE_NAME)
+data_file = Lagrange.data_file(misc_dir, "#{OPTIONS[:as]}.json")
 
-if(snapshot)
-  raise "Can't use --import in conjunction with --snapshot." if(import_file != "")
-  raise "Can't use --delete in conjunction with --snapshot." if(delete)
-else
-  raise "Must specify a file to import, use '-?' for usage." if(import_file == "")
+case cli.usage_form
+when :import
+  import_file = OPTIONS[:import]
+
   import_file = Lagrange.raw_file(import_file)
   raise "Specified file does not exist: #{import_file.absolute}" if(!File.exists?(import_file.absolute))
-end
 
-additions = []
-unless(snapshot)
+  additions = []
+
   Lagrange.logger.info("Reading #{import_file.absolute}...")
   if(import_file.absolute =~ /\.(webloc|ftploc)$/)
     if(File.size(import_file.absolute) == 0)
@@ -83,7 +78,7 @@ unless(snapshot)
       raise "Couldn't parse #{import_file.absolute}!" if(plist_data.nil?)
       unknown_keys = plist_data.keys - ["URL"]
       if(unknown_keys.count > 0)
-        delete = false
+        OPTIONS[:delete] = false
         Lagrange.logger.warn("Got unknown keys in webloc: #{unknown_keys.join(', ')}")
       end
       raise "Couldn't find a URL in #{import_file.absolute}!" if(plist_data["URL"].nil? || plist_data["URL"] == "")
@@ -92,14 +87,9 @@ unless(snapshot)
   else
     additions += File.readlines(import_file.absolute).map { |line| line.chomp }
   end
-end
 
-misc_dir = Lagrange.interface_directory(Lagrange::Interface::MiscURL::INTERFACE_NAME)
-data_file = Lagrange.data_file(misc_dir, "#{import_as}.json")
+  Lagrange.ensure_clean(data_file) unless(OPTIONS[:defer])
 
-Lagrange.ensure_clean(data_file) unless(defer || snapshot)
-
-unless(snapshot)
   if(File.exist?(data_file.absolute))
     current_data = MultiJson.load(File.read(data_file.absolute), symbolize_keys: true)
   else
@@ -118,13 +108,13 @@ unless(snapshot)
 
   if(raw_count != additions.count)
     Lagrange.logger.warn("Not adding #{raw_count-additions.count} records out of #{raw_count} due to lack of well-formedness!")
-    delete = false
+    OPTIONS[:delete] = false
   end
 
-  additions = additions.map do |url|
-    cleansed_url = Lagrange::DataTypes::URLs.cleanup(url).to_s
+  additions = additions.map do |a_url|
+    cleansed_url = Lagrange::DataTypes::URLs.cleanup(a_url).to_s
     {
-      url: url,
+      url: a_url,
       cleansed_url: cleansed_url,
       uuid: Lagrange::DataTypes::URLs.uuid(cleansed_url),
     }
@@ -135,7 +125,7 @@ unless(snapshot)
   creates = additions.reject { |bookmark| current_urls.include?(bookmark[:cleansed_url]) }
   if(additions.count != creates.count)
     Lagrange.logger.warn("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
-    delete = false
+    OPTIONS[:delete] = false
   end
 
   current_data += additions
@@ -145,8 +135,11 @@ unless(snapshot)
     f.write(MultiJson.dump(current_data, pretty: true))
     f.write("\n")
   end
+
+  File.unlink(import_file.absolute) if(OPTIONS[:delete])
+
+  Lagrange::snapshot(data_file, cli) unless(OPTIONS[:defer])
+
+when :snapshot
+  Lagrange::snapshot(data_file, cli)
 end
-
-File.unlink(import_file.absolute) if(delete)
-
-Lagrange::snapshot(data_file, cli) unless(defer)
