@@ -32,6 +32,7 @@ module Lagrange
     require 'multi_json'
     require 'active_support/all'
     require 'virtus'
+    require 'dm-validations'
 
     # Hacks to things...
     require 'lagrange/monkeypatches'

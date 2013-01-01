@@ -10,10 +10,11 @@ gem 'clint',         require: false
 ###############################################################################
 # Core Data Model Tools
 ###############################################################################
-gem 'grit',        require: false
-gem 'virtus',      require: false
-gem 'addressable', require: false
-gem 'yajl-ruby',   require: false # Using YAJL for pretty-printing...
+gem 'grit',           require: false
+gem 'virtus',         require: false
+gem 'dm-validations', require: false
+gem 'addressable',    require: false
+gem 'yajl-ruby',      require: false # Using YAJL for pretty-printing...
 
 
 ###############################################################################

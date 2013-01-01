@@ -1,6 +1,7 @@
 module Lagrange
   class Model
     include Virtus
+    include DataMapper::Validations
 
     def as_json(*args)
       tmp = Hash.new
