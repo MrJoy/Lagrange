@@ -33,7 +33,6 @@ module Lagrange
 
       self.option_map.each do |name, config|
         if(config[:default] && self.options[name].blank?)
-          puts "Applying default value for #{name}, of #{config[:default]}"
           self.options[name] = config[:default]
         end
       end

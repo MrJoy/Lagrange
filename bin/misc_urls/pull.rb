@@ -91,7 +91,6 @@ when :import
       ca = a_url[:created_at]
       a_url.merge!(updates[a_url[:cleansed_url]])
       a_url[:created_at] = ca if(ca)
-      puts a_url.inspect
     end
     a_url
   end
