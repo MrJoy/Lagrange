@@ -28,6 +28,16 @@ module Lagrange
         @raw_url = val
       end
 
+      def merge_new_version(new_version)
+        raise "Can't combine records with different UUIDs!" if(self.uuid != new_version.uuid)
+        raise "Can't combine records with different canonical URLs!" if(self.canonical_url != new_version.canonical_url)
+
+        self.title = new_version.title if(!new_version.title.blank?)
+        self.updated_at = new_version.updated_at if(new_version.updated_at > self.updated_at)
+
+        self.interface_data.merge!(new_version.interface_data)
+      end
+
     protected
 
       def canonical_url=(val); @canonical_url = Lagrange::DataTypes::URLs.canonicalize(val).to_s; end
