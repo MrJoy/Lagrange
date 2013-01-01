@@ -10,6 +10,9 @@ if(ENV['USING_COVERAGE'].to_i > 0)
   DATA_TYPES_PATHS=[
     expand_path("lib/lagrange/data_types/**/*.rb")
   ].flatten
+  FILE_TYPES_PATHS=[
+    expand_path("lib/lagrange/file_types/**/*.rb")
+  ].flatten
   MODELS_PATHS=[
     expand_path("lib/lagrange/models/**/*.rb")
   ].flatten
@@ -28,6 +31,9 @@ if(ENV['USING_COVERAGE'].to_i > 0)
     end
     add_group "Data Types" do |src_file|
       (DATA_TYPES_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
+    end
+    add_group "File Types" do |src_file|
+      (FILE_TYPES_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
     end
     add_group "Models" do |src_file|
       (MODELS_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
