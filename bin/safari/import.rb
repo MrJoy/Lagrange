@@ -10,15 +10,15 @@ options = ["-i <name>", "--import=<name>"]
 Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
 Lagrange::CLI.add_help_for_option(
   options,
-  "Import the specified Safari bookmark set to the native format.  If this option is ommitted, then Lagrange will use the default set named '#{Lagrange::Safari::MODULE_NAME}'.",
+  "Import the specified Safari bookmark set to the native format.  If this option is ommitted, then Lagrange will use the default set named '#{Lagrange::Modules::Safari::MODULE_NAME}'.",
 )
 Lagrange::CLI.clint.options import: String, i: :import
 
 Lagrange::CLI.parse_options
 
-import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Safari::DEFAULT_DATASET
+import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Modules::Safari::DEFAULT_DATASET
 
-safari_dir = Lagrange.module_directory(Lagrange::Safari::MODULE_NAME)
+safari_dir = Lagrange.module_directory(Lagrange::Modules::Safari::MODULE_NAME)
 filename_tmp=File.join(safari_dir.absolute, "#{import_set}.xml")
 raise "Specified dataset does not exist: #{import_set}" if(!File.exists?(filename_tmp))
 data_file = Lagrange.data_file(safari_dir, "#{import_set}.xml")

@@ -1,5 +1,3 @@
-require 'mirrored'
-
 # TODO: Identify the PROPER fix for this, instead of monkey-patching mirrored to NOT DO SSL VALIDATION. >.<
 module Mirrored
   class Connection
@@ -25,11 +23,19 @@ module Mirrored
     end
   end
 end
-# ENV['SSL_CERT_FILE']="/opt/local/etc/certs/cacert.pem"
 
-Mirrored.API_URL[:pinboard] = "https://api.pinboard.in/v1"
 module Lagrange
-  module Mirrord
-    MODULE_NAME="mirrord"
+  module Modules
+    module Mirrord
+      MODULE_NAME="mirrord"
+      def self.init_dependencies!
+        return if(defined?(@initialized) && @initialized)
+        @initialized = true
+        require 'mirrored'
+        # ENV['SSL_CERT_FILE']="/opt/local/etc/certs/cacert.pem"
+
+        Mirrored.API_URL[:pinboard] = "https://api.pinboard.in/v1"
+      end
+    end
   end
 end

@@ -39,7 +39,7 @@ raise("Must specify user, and password!") unless(username != "" and password != 
 
 import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : username
 
-mirrord_dir = Lagrange.module_directory(Lagrange::Mirrord::MODULE_NAME)
+mirrord_dir = Lagrange.module_directory(Lagrange::Modules::Mirrord::MODULE_NAME)
 native_file = Lagrange.data_file(mirrord_dir, "#{import_set}.yml")
 Lagrange.ensure_clean(native_file)
 

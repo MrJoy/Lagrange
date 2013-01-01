@@ -22,7 +22,7 @@ options = ["-a <name>", "--as=<name>"]
 Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
 Lagrange::CLI.add_help_for_option(
   options,
-  "Save the data under the name repo/#{Lagrange::MiscURLs::MODULE_NAME}/<name>.json.  Defaults to '#{Lagrange::MiscURLs::DEFAULT_DATASET}'."
+  "Save the data under the name repo/#{Lagrange::Modules::MiscURL::MODULE_NAME}/<name>.json.  Defaults to '#{Lagrange::Modules::MiscURL::DEFAULT_DATASET}'."
 )
 Lagrange::CLI.clint.options as: String, a: :as
 
@@ -55,7 +55,7 @@ Lagrange::CLI.parse_options
 OPTIONS = Lagrange::CLI.clint.options
 
 import_file = OPTIONS[:import]
-import_as = (OPTIONS[:as] != "") ? OPTIONS[:as] : Lagrange::MiscURLs::DEFAULT_DATASET
+import_as = (OPTIONS[:as] != "") ? OPTIONS[:as] : Lagrange::Modules::MiscURL::DEFAULT_DATASET
 defer = OPTIONS[:defer]
 snapshot = OPTIONS[:snapshot]
 delete = OPTIONS[:delete]
@@ -102,7 +102,7 @@ unless(snapshot)
   end
 end
 
-misc_dir = Lagrange.module_directory(Lagrange::MiscURLs::MODULE_NAME)
+misc_dir = Lagrange.module_directory(Lagrange::Modules::MiscURL::MODULE_NAME)
 data_file = Lagrange.data_file(misc_dir, "#{import_as}.json")
 
 Lagrange.ensure_clean(data_file) unless(defer || snapshot)

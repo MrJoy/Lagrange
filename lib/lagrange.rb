@@ -34,6 +34,7 @@ module Lagrange
 
     # Hacks to things...
     require 'lagrange/monkeypatches'
+    require 'lagrange/inflections'
 
     # Sub-modules...
     require 'lagrange/version'
@@ -60,7 +61,11 @@ module Lagrange
 
     # We may have been initialized already but are being reinitialized with a
     # different module in mind...
-    require "lagrange/modules/#{module_name}" if(!module_name.blank?)
+    if(!module_name.blank?)
+      name = "lagrange/modules/#{module_name}"
+      require name
+      name.classify.constantize.init_dependencies!
+    end
   end
 
   def self.load_models!
