@@ -42,9 +42,13 @@ module Lagrange
     require 'lagrange/cli'
     require 'lagrange/git'
 
-    # Support logic...
+    # Support logic for specific data types...
     require 'lagrange/data_types/urls'
     Lagrange::DataTypes::URLs.init_dependencies!
+
+    # Support logic for specific file formats...
+    require 'lagrange/file_types/json'
+    require 'lagrange/file_types/webloc'
   end
 
   def self.init!(interface_name = nil)

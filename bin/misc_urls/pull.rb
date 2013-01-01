@@ -60,30 +60,7 @@ when :import
 
   Lagrange.logger.info("Reading #{import_file.absolute}...")
   if(import_file.absolute =~ /\.(webloc|ftploc)$/)
-    if(File.size(import_file.absolute) == 0)
-      url = raw_resource_fork = `DeRez -e -only 'url ' #{import_file.absolute.shellescape} | fgrep '$"'`.
-        split(/\n/).
-        map { |line| line.gsub(/^[ \t]+\$"(.*?)".*$/, '\1').gsub(/([0-9A-F]{2})/, '\1 ').split(/\s+/) }.
-        flatten.
-        map { |hexcode| hexcode.to_i(16).chr }.
-        join('').
-        chomp
-      if(url.nil? || url == "")
-        raise "Couldn't retrieve URL from webloc/ftploc that appears to be storing it in the resource fork.  Do you have the developer tools installed?"
-      end
-      additions << url
-    else
-      raw_data = `plutil -convert xml1 -o - -s #{import_file.absolute.shellescape}`
-      plist_data = Plist::parse_xml(raw_data)
-      raise "Couldn't parse #{import_file.absolute}!" if(plist_data.nil?)
-      unknown_keys = plist_data.keys - ["URL"]
-      if(unknown_keys.count > 0)
-        OPTIONS[:delete] = false
-        Lagrange.logger.warn("Got unknown keys in webloc: #{unknown_keys.join(', ')}")
-      end
-      raise "Couldn't find a URL in #{import_file.absolute}!" if(plist_data["URL"].nil? || plist_data["URL"] == "")
-      additions << plist_data["URL"]
-    end
+    additions << Lagrange::FileTypes::Webloc.read(import_file.absolute)
   else
     additions += File.readlines(import_file.absolute).map { |line| line.chomp }
   end
@@ -91,7 +68,7 @@ when :import
   Lagrange.ensure_clean(data_file) unless(OPTIONS[:defer])
 
   if(File.exist?(data_file.absolute))
-    current_data = MultiJson.load(File.read(data_file.absolute), symbolize_keys: true)
+    current_data = Lagrange::FileTypes::JSON.read(data_file.absolute)
   else
     current_data = []
   end
@@ -125,15 +102,13 @@ when :import
   creates = additions.reject { |bookmark| current_urls.include?(bookmark[:cleansed_url]) }
   if(additions.count != creates.count)
     Lagrange.logger.warn("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
-    OPTIONS[:delete] = false
   end
 
-  current_data += additions
+  current_data += creates
   current_data = current_data.sort { |a, b| a[:uuid] <=> b[:uuid] }
 
   File.open(data_file.absolute, "w") do |f|
-    f.write(MultiJson.dump(current_data, pretty: true))
-    f.write("\n")
+    f.write(Lagrange::FileTypes::JSON.synthesize(current_data))
   end
 
   File.unlink(import_file.absolute) if(OPTIONS[:delete])
