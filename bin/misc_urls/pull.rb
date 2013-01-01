@@ -77,7 +77,6 @@ when :import
   additions = additions.map do |a_url|
     cleansed_url = Lagrange::DataTypes::URLs.cleanup(a_url[:url]).to_s
     template.merge(a_url.merge({
-      updated_at: DateTime.now.utc,
       cleansed_url: cleansed_url,
       uuid: Lagrange::DataTypes::URLs.uuid(cleansed_url),
     }))
@@ -103,7 +102,7 @@ when :import
   current_data += creates
   current_data = current_data.sort { |a, b| a[:uuid] <=> b[:uuid] }
 
-  File.open(data_file.absolute, "w") do |f|
+  File.open(data_file.absolute, "wb") do |f|
     f.write(Lagrange::FileTypes::JSON.synthesize(current_data))
   end
 

@@ -11,9 +11,14 @@ module Lagrange
       #
       def self.read(fname)
         stat_data = File.stat(fname)
+        result = {
+          title: File.basename(fname.sub(/\.(webloc|ftploc)$/, '')),
+          created_at: stat_data.ctime.to_datetime.utc,
+          updated_at: stat_data.mtime.to_datetime.utc
+        }
 
         if(File.size(fname) == 0)
-          url = raw_resource_fork = `DeRez -e -only 'url ' #{fname.shellescape} | fgrep '$"'`.
+          url = `DeRez -e -only 'url ' #{fname.shellescape} | fgrep '$"'`.
             split(/\n/).
             map { |line| line.gsub(/^[ \t]+\$"(.*?)".*$/, '\1').gsub(/([0-9A-F]{2})/, '\1 ').split(/\s+/) }.
             flatten.
@@ -24,21 +29,13 @@ module Lagrange
           if(url.blank?)
             raise "Couldn't retrieve URL from webloc/ftploc's resource fork via DeRez.  Do you have the developer tools installed?"
           end
-          return {
-            url: url,
-            title: fname.sub(/\.(webloc|ftploc)$/, ''),
-            created_at: stat_data.ctime.to_datetime.utc,
-            updated_at: stat_data.mtime.to_datetime.utc
-          }
+          result[:url] = url
         else
           raw_data = `plutil -convert xml1 -o - -s #{fname.shellescape}`
-          return {
-            url: self.parse(raw_data),
-            title: fname.sub(/\.(webloc|ftploc)$/, ''),
-            created_at: stat_data.ctime.to_datetime.utc,
-            updated_at: stat_data.mtime.to_datetime.utc
-          }
+          result[:url] = self.parse(raw_data)
         end
+
+        return result
       end
 
       ##
