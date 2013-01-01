@@ -78,6 +78,16 @@ module Lagrange
     return data
   end
 
+  def self.config_file(filename)
+    absolute_name = File.join(Lagrange::repository.absolute, filename)
+    data = OpenStruct.new({
+      absolute: absolute_name,
+      absolute_escaped: Shellwords.shellescape(absolute_name),
+    })
+
+    return data
+  end
+
   def self.data_file(module_dir, filename)
     relative_name = File.join(module_dir.relative, filename)
     absolute_name = File.join(Lagrange::repository.absolute, relative_name)
