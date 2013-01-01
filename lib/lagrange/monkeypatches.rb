@@ -1,5 +1,6 @@
 class String
-  def word_wrap(max_width = LAGRANGE_ASSUMED_TERM_WIDTH)
+  def word_wrap(max_width = nil)
+    max_width = Lagrange::CLI::LAGRANGE_ASSUMED_TERM_WIDTH if(max_width.nil?)
     return self if(self.length < max_width) # Nothing to wrap.
 
     left_side = self[0,max_width]

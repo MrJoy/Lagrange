@@ -1,5 +1,6 @@
 source :gemcutter
-source 'http://gems.github.com'
+
+gem 'virtus'
 
 gem 'grit', '~> 2.4.1'
 gem 'clint'
@@ -11,6 +12,7 @@ gem 'plist', '~> 3.1.0'
 # https://gist.github.com/303378
 
 # Syncing Contacts:
+gem 'contacts', require: false
 #   https://github.com/mislav/contacts
 #   https://github.com/pengwynn/linkedin
 

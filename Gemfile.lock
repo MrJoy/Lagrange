@@ -1,10 +1,15 @@
 GEM
   remote: http://rubygems.org/
-  remote: http://gems.github.com/
   specs:
     addressable (2.2.6)
+    backports (2.6.5)
     clint (0.2.7)
+    contacts (1.2.4)
+      gdata (= 1.1.1)
+      json (>= 0.4.1)
+    descendants_tracker (0.0.1)
     diff-lcs (1.1.2)
+    gdata (1.1.1)
     grit (2.4.1)
       diff-lcs (~> 1.1)
       mime-types (~> 1.15)
@@ -14,6 +19,9 @@ GEM
     mirrored (0.1.6)
       hpricot (>= 0.5)
     plist (3.1.0)
+    virtus (0.5.4)
+      backports (~> 2.6.1)
+      descendants_tracker (~> 0.0.1)
 
 PLATFORMS
   ruby
@@ -21,7 +29,9 @@ PLATFORMS
 DEPENDENCIES
   addressable (~> 2.2.6)
   clint
+  contacts
   grit (~> 2.4.1)
   json
   mirrored (~> 0.1.3)
   plist (~> 3.1.0)
+  virtus

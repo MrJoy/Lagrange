@@ -18,36 +18,36 @@
 ## Remove Google Analytics cruft:
 
 ```ruby
-Lagrange::URLs.blacklist_parameter("utm_source")
-Lagrange::URLs.blacklist_parameter("utm_medium")
-Lagrange::URLs.blacklist_parameter("utm_term")
-Lagrange::URLs.blacklist_parameter("utm_content")
-Lagrange::URLs.blacklist_parameter("utm_campaign")
+Lagrange::DataTypes::URLs.blacklist_parameter("utm_source")
+Lagrange::DataTypes::URLs.blacklist_parameter("utm_medium")
+Lagrange::DataTypes::URLs.blacklist_parameter("utm_term")
+Lagrange::DataTypes::URLs.blacklist_parameter("utm_content")
+Lagrange::DataTypes::URLs.blacklist_parameter("utm_campaign")
 ```
 
 
 ## Normalize YouTube URLs:
 
 ```ruby
-Lagrange::URLs.add_host_mapping("youtube.com", "www.youtube.com")
-Lagrange::URLs.blacklist_parameter("feature", "www.youtube.com")
+Lagrange::DataTypes::URLs.add_host_mapping("youtube.com", "www.youtube.com")
+Lagrange::DataTypes::URLs.blacklist_parameter("feature", "www.youtube.com")
 ```
 
 
 ## Normalize Imgur URLs:
 
 ```ruby
-Lagrange::URLs.add_host_mapping("imgur.com", "i.imgur.com")
+Lagrange::DataTypes::URLs.add_host_mapping("imgur.com", "i.imgur.com")
 ```
 
 
 ## Tests:
 
 ```ruby
-Lagrange::URLs.cleanup("http://blogs.forbes.com/andygreenberg/2011/07/29/undeterred-by-arrests-anonymous-spills-data-from-fbi-contractor-mantech/")
-Lagrange::URLs.cleanup("http://YouTube.com/watch?v=bf2B4AideIU&feature=feedf&feature=feedf&utm_source=dhjksdh").to_s
-Lagrange::URLs.cleanup("http://somewhere.com/watch?v=bf2B4AideIU&feature=feedf&feature=feedf&utm_source=dhjksdh").to_s
-Lagrange::URLs.cleanup("http://reviews.cnet.com/8301-19512_7-10260079-233.html?tag=rtcol;inTheNewsNow").to_s
+Lagrange::DataTypes::URLs.cleanup("http://blogs.forbes.com/andygreenberg/2011/07/29/undeterred-by-arrests-anonymous-spills-data-from-fbi-contractor-mantech/")
+Lagrange::DataTypes::URLs.cleanup("http://YouTube.com/watch?v=bf2B4AideIU&feature=feedf&feature=feedf&utm_source=dhjksdh").to_s
+Lagrange::DataTypes::URLs.cleanup("http://somewhere.com/watch?v=bf2B4AideIU&feature=feedf&feature=feedf&utm_source=dhjksdh").to_s
+Lagrange::DataTypes::URLs.cleanup("http://reviews.cnet.com/8301-19512_7-10260079-233.html?tag=rtcol;inTheNewsNow").to_s
 uri = Addressable::URI.parse("http://reviews.cnet.com/8301-19512_7-10260079-233.html?tag=rtcol;inTheNewsNow")
 ```
 

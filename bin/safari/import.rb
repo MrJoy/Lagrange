@@ -1,30 +1,30 @@
 #!/usr/bin/env ruby
 LAGRANGE_PATH = File.expand_path('../../../',  __FILE__)
-require File.expand_path("#{LAGRANGE_PATH}/lib/boot")
-require 'lagrange/safari/common'
+require File.expand_path("#{LAGRANGE_PATH}/lib/lagrange")
+Lagrange.init!('safari')
 
 
-Lagrange::toolname = __FILE__
+Lagrange::CLI.toolname = __FILE__
 
 options = ["-i <name>", "--import=<name>"]
-Lagrange::add_usage_form("[#{options.join('|')}]")
-Lagrange::add_help_for_option(
+Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
+Lagrange::CLI.add_help_for_option(
   options,
   "Import the specified Safari bookmark set to the native format.  If this option is ommitted, then Lagrange will use the default set named '#{Lagrange::Safari::MODULE_NAME}'.",
 )
-Lagrange::clint.options import: String, i: :import
+Lagrange::CLI.clint.options import: String, i: :import
 
-Lagrange::parse_options
+Lagrange::CLI.parse_options
 
-import_set = (Lagrange::clint.options[:import] != "") ? Lagrange::clint.options[:import] : Lagrange::Safari::DEFAULT_DATASET
+import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Safari::DEFAULT_DATASET
 
-safari_dir = Lagrange::module_directory(Lagrange::Safari::MODULE_NAME)
+safari_dir = Lagrange.module_directory(Lagrange::Safari::MODULE_NAME)
 filename_tmp=File.join(safari_dir.absolute, "#{import_set}.xml")
 raise "Specified dataset does not exist: #{import_set}" if(!File.exists?(filename_tmp))
-data_file = Lagrange::data_file(safari_dir, "#{import_set}.xml")
-Lagrange::ensure_clean(data_file)
-native_file = Lagrange::data_file(safari_dir, "#{import_set}.yml")
-Lagrange::ensure_clean(native_file)
+data_file = Lagrange.data_file(safari_dir, "#{import_set}.xml")
+Lagrange.ensure_clean(data_file)
+native_file = Lagrange.data_file(safari_dir, "#{import_set}.yml")
+Lagrange.ensure_clean(native_file)
 
 raw_data = File.readlines(filename_tmp).join('')
 plist_data = Plist::parse_xml(raw_data)
@@ -48,16 +48,16 @@ def transform_bookmark(bookmark)
       children: children.sort { |a,b| (a[:uuid] || a[:safari_uuid]) <=> (b[:uuid] || b[:safari_uuid]) },
     }
   when "WebBookmarkTypeLeaf"
-    url_tmp=Lagrange::URLs.cleanup(bookmark["URLString"]).to_s rescue nil
+    url_tmp=Lagrange::DataTypes::URLs.cleanup(bookmark["URLString"]).to_s rescue nil
     if(url_tmp.nil?)
-      $stderr.puts("Skipping invalid bookmark for UUID #{bookmark["WebBookmarkUUID"]}: #{bookmark["URLString"]}")
+      STDERR.puts("Skipping invalid bookmark for UUID #{bookmark["WebBookmarkUUID"]}: #{bookmark["URLString"]}")
     else
-      cleansed_url = Lagrange::URLs.cleanup(bookmark["URLString"]).to_s
+      cleansed_url = Lagrange::DataTypes::URLs.cleanup(bookmark["URLString"]).to_s
       return {
         title: bookmark["URIDictionary"]["title"],
         url: bookmark["URLString"],
         cleansed_url: cleansed_url,
-        uuid: Lagrange::URLs.uuid(cleansed_url),
+        uuid: Lagrange::DataTypes::URLs.uuid(cleansed_url),
         safari_uuid: bookmark["WebBookmarkUUID"],
       }
     end
