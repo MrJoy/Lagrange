@@ -13,8 +13,8 @@ if(ENV['USING_COVERAGE'].to_i > 0)
   MODELS_PATHS=[
     expand_path("lib/lagrange/models/**/*.rb")
   ].flatten
-  MODULES_PATHS=[
-    expand_path("lib/lagrange/modules/**/*.rb")
+  INTERFACES_PATHS=[
+    expand_path("lib/lagrange/interface/**/*.rb")
   ].flatten
   TEST_PATHS=[
     expand_path("features/**/*.rb"),
@@ -32,8 +32,8 @@ if(ENV['USING_COVERAGE'].to_i > 0)
     add_group "Models" do |src_file|
       (MODELS_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
     end
-    add_group "Modules" do |src_file|
-      (MODULES_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
+    add_group "Interfaces" do |src_file|
+      (INTERFACES_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)
     end
     add_group "Tests" do |src_file|
       (TEST_PATHS.map { |p| src_file.filename.start_with?(p) }.select { |tf| tf }.count != 0)

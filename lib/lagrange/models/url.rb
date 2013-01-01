@@ -1,14 +1,14 @@
 module Lagrange
   class URL < Model
-    attribute :uuid,          String
-    attribute :url,           String
-    attribute :canonical_url, String
-    attribute :cleansed_url,  String
-    attribute :title,         String
-    attribute :module_data,   AutoVivifyingOpenStruct, default: proc { AutoVivifyingOpenStruct.new }
+    attribute :uuid,           String
+    attribute :url,            String
+    attribute :canonical_url,  String
+    attribute :cleansed_url,   String
+    attribute :title,          String
+    attribute :interface_data, AutoVivifyingOpenStruct, default: proc { AutoVivifyingOpenStruct.new }
 
-    attribute :created_at,    DateTime
-    attribute :updated_at,    DateTime
+    attribute :created_at,     DateTime
+    attribute :updated_at,     DateTime
 
     # def url=(val)
     #   self.canonical_url = val

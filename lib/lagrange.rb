@@ -47,10 +47,10 @@ module Lagrange
     Lagrange::DataTypes::URLs.init_dependencies!
   end
 
-  def self.init!(module_name = nil)
+  def self.init!(interface_name = nil)
     return if(defined?(@initialized) && @initialized)
     was_initialized = @initialized
-    @initialized = module_name || true
+    @initialized = interface_name || true
 
     if(!was_initialized)
       # We haven't been initialized at all yet...
@@ -60,9 +60,9 @@ module Lagrange
     end
 
     # We may have been initialized already but are being reinitialized with a
-    # different module in mind...
-    if(!module_name.blank?)
-      name = "lagrange/modules/#{module_name}"
+    # different interface in mind...
+    if(!interface_name.blank?)
+      name = "lagrange/interface/#{interface_name}"
       require name
       name.classify.constantize.init_dependencies!
     end
@@ -73,7 +73,6 @@ module Lagrange
     Dir[File.join(File.dirname(__FILE__), '/lagrange/models/**/*.rb')].each do |fname|
       require fname
     end
-    # Lagrange::Model.finalize!
   end
 
   def self.repository
@@ -107,19 +106,19 @@ module Lagrange
     end
   end
 
-  def self.module_directory(module_name)
-    absolute_dir = File.join(Lagrange::repository.absolute, module_name)
+  def self.interface_directory(interface_name)
+    absolute_dir = File.join(Lagrange::repository.absolute, interface_name)
 
-    module_dir = OpenStruct.new({
+    interface_dir = OpenStruct.new({
       absolute: absolute_dir,
-      relative: module_name,
+      relative: interface_name,
     })
 
-    unless(File.directory?(module_dir.absolute))
-      STDERR.puts("Creating directory for module '#{module_name}' at: #{module_dir.absolute}")
-      FileUtils.mkdir_p(module_dir.absolute) || raise("Can't ensure #{module_dir.absolute} exists!")
+    unless(File.directory?(interface_dir.absolute))
+      STDERR.puts("Creating directory for interface '#{interface_name}' at: #{interface_dir.absolute}")
+      FileUtils.mkdir_p(interface_dir.absolute) || raise("Can't ensure #{interface_dir.absolute} exists!")
     end
-    return module_dir
+    return interface_dir
   end
 
   def self.raw_file(filename)
@@ -139,13 +138,13 @@ module Lagrange
     return data
   end
 
-  def self.data_file(module_dir, filename)
-    relative_name = File.join(module_dir.relative, filename)
+  def self.data_file(interface_dir, filename)
+    relative_name = File.join(interface_dir.relative, filename)
     absolute_name = File.join(Lagrange::repository.absolute, relative_name)
     data = OpenStruct.new({
       relative: relative_name,
       absolute: absolute_name,
-      module_home: module_dir,
+      interface_home: interface_dir,
     })
 
     return data

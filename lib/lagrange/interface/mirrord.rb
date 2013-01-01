@@ -25,9 +25,9 @@ module Mirrored
 end
 
 module Lagrange
-  module Modules
+  module Interface
     module Mirrord
-      MODULE_NAME="mirrord"
+      INTERFACE_NAME="mirrord"
       def self.init_dependencies!
         return if(defined?(@initialized) && @initialized)
         @initialized = true
