@@ -7,40 +7,39 @@ LAGRANGE_PATH = File.expand_path('../../../',  __FILE__)
 require File.expand_path("#{LAGRANGE_PATH}/lib/lagrange")
 Lagrange.init!('misc_urls')
 
-
-Lagrange::CLI.toolname = __FILE__
+cli = Lagrange::CLI.new(__FILE__)
 
 IMPORT_OPTIONS = ["-i <file>", "--import=<file>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   IMPORT_OPTIONS,
   "Import the specified OSX webloc/ftploc file, or text file.  If the file is a text file, it is presumed to contain one URL per line."
 )
 
 ALIAS_OPTIONS = ["-a <name>", "--as=<name>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   ALIAS_OPTIONS,
   "Save the data under the name repo/#{Lagrange::Interface::MiscURL::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::MiscURL::DEFAULT_DATASET}'."
 )
 
 DEFER_OPTIONS = ["-d", "--defer"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   DEFER_OPTIONS,
   "Don't check to ensure dataset is clean, and don't commit after modifying.  Handy when importing many webloc/ftploc files.  Be sure to use --snapshot afterwards though."
 )
 
 DELETE_OPTIONS = ["--delete"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   DELETE_OPTIONS,
   "Delete the import file if, and only if it is successfully imported."
 )
 
 SNAPSHOT_OPTIONS = ["-s", "--snapshot"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   SNAPSHOT_OPTIONS,
   "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
 )
 
-Lagrange::CLI.add_usage_form({
+cli.add_usage_form({
   required: [IMPORT_OPTIONS],
   optional: [
     ALIAS_OPTIONS,
@@ -49,13 +48,13 @@ Lagrange::CLI.add_usage_form({
   ]
 })
 
-Lagrange::CLI.add_usage_form({
+cli.add_usage_form({
   required: [SNAPSHOT_OPTIONS],
   optional: [ALIAS_OPTIONS]
 })
 
-Lagrange::CLI.parse_options
-OPTIONS = Lagrange::CLI.clint.options
+exit(1) unless(cli.parse_options(ARGV))
+OPTIONS = cli.options
 
 import_file = OPTIONS[:import]
 import_as = (OPTIONS[:as] != "") ? OPTIONS[:as] : Lagrange::Interface::MiscURL::DEFAULT_DATASET
@@ -160,4 +159,4 @@ end
 
 File.unlink(import_file.absolute) if(delete)
 
-Lagrange::snapshot(data_file) unless(defer)
+Lagrange::snapshot(data_file, cli) unless(defer)

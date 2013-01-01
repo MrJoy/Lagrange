@@ -4,10 +4,10 @@ require File.expand_path("#{LAGRANGE_PATH}/lib/lagrange")
 Lagrange.init!('safari')
 
 
-Lagrange::CLI.toolname = __FILE__
+cli = Lagrange::CLI.new(__FILE__)
 
 IMPORT_OPTIONS=["-i <plist>", "--import=<plist>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   IMPORT_OPTIONS,
   [
     "Import the specified Safari bookmarks file.  If this option is ommitted, then Lagrange will look for bookmarks here:",
@@ -16,22 +16,23 @@ Lagrange::CLI.add_option_with_help(
 )
 
 ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   ALIAS_OPTIONS,
   "Save the data under the name repo/#{Lagrange::Interface::Safari::INTERFACE_NAME}/<name>.xml.  Defaults to '#{Lagrange::Interface::Safari::DEFAULT_DATASET}'."
 )
 
-Lagrange::CLI.add_usage_form({
+cli.add_usage_form({
   optional: [
     IMPORT_OPTIONS,
     ALIAS_OPTIONS,
   ]
 })
 
-Lagrange::CLI.parse_options
+exit(1) unless(cli.parse_options(ARGV))
+OPTIONS = cli.options
 
-import_file = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Interface::Safari::DEFAULT_BOOKMARKS_PATH
-import_as = (Lagrange::CLI.clint.options[:as] != "") ? Lagrange::CLI.clint.options[:as] : Lagrange::Interface::Safari::DEFAULT_DATASET
+import_file = (!OPTIONS[:import].blank?) ? OPTIONS[:import] : Lagrange::Interface::Safari::DEFAULT_BOOKMARKS_PATH
+import_as = (!OPTIONS[:as].blank?) ? OPTIONS[:as] : Lagrange::Interface::Safari::DEFAULT_DATASET
 
 raise "Specified file does not exist: #{import_file}" if(!File.exists?(import_file))
 
@@ -46,4 +47,4 @@ File.open(data_file.absolute, "w") do |f|
   f.write(raw_data)
 end
 
-Lagrange::snapshot(data_file)
+Lagrange::snapshot(data_file, cli)

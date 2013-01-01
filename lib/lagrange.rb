@@ -39,7 +39,6 @@ module Lagrange
     # Sub-modules...
     require 'lagrange/version'
     require 'lagrange/cli'
-    Lagrange::CLI.init_dependencies!
     require 'lagrange/git'
 
     # Support logic...
@@ -158,13 +157,13 @@ module Lagrange
     end
   end
 
-  def self.snapshot(file)
+  def self.snapshot(file, cli)
     # TODO: Use Grit!
     STDERR.puts("Snapshotting file in repo: #{file.relative}")
     system(%Q{
       cd #{Lagrange::repository.absolute.shellescape} &&
       git add #{file.relative.shellescape} &&
-      git commit -m "Snapshotting, via #{Lagrange::CLI.toolname}" -- #{file.relative.shellescape}
+      git commit -m "Snapshotting, via #{cli.toolname}" -- #{file.relative.shellescape}
     })# || STDERR.puts("Had nothing to do, or got an error...")
   end
 end

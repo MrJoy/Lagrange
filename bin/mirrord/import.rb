@@ -4,27 +4,27 @@ require File.expand_path("#{LAGRANGE_PATH}/lib/lagrange")
 Lagrange.init!('mirrord')
 
 
-Lagrange::CLI.toolname = __FILE__
+cli = Lagrange::CLI.new(__FILE__)
 
 USER_OPTIONS=["-u <username>", "--user=<username>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   USER_OPTIONS,
   "Authenticate using the specified username.",
 )
 
 PASSWORD_OPTIONS=["-p <password>", "--password=<password>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   PASSWORD_OPTIONS,
   "Authenticate using the specified password.",
 )
 
 ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
-Lagrange::CLI.add_option_with_help(
+cli.add_option_with_help(
   ALIAS_OPTIONS,
   "Save the data under the name repo/#{Lagrange::Interface::Mirrord::INTERFACE_NAME}/<name>.json.  Defaults to '<username>.json'."
 )
 
-Lagrange::CLI.add_usage_form({
+cli.add_usage_form({
   required: [
     USER_OPTIONS,
     PASSWORD_OPTIONS
@@ -34,10 +34,11 @@ Lagrange::CLI.add_usage_form({
   ]
 })
 
-Lagrange::CLI.parse_options
+exit(1) unless(cli.parse_options(ARGV))
+OPTIONS = cli.options
 
-username = Lagrange::CLI.clint.options[:user].downcase
-password = Lagrange::CLI.clint.options[:password]
+username = OPTIONS[:user].downcase
+password = OPTIONS[:password]
 
 raise("Must specify user, and password!") unless(username != "" and password != "")
 
@@ -76,4 +77,4 @@ File.open(native_file.absolute, "w") do |f|
   }.to_yaml)
 end
 
-Lagrange::snapshot(native_file)
+Lagrange::snapshot(native_file, cli)
