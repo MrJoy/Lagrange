@@ -10,10 +10,10 @@ module Lagrange
 
       add_usage_form({ required: [HELP_OPTIONS + VERSION_OPTIONS] })
 
-      add_help_spacer
+      self.help_messages << ""
       add_option_with_help(HELP_OPTIONS, "Show this help message, then exit.")
       add_option_with_help(VERSION_OPTIONS, "Show version and copyright info.")
-      add_help_spacer
+      self.help_messages << ""
     end
 
     def parse_options(opts)
@@ -42,10 +42,6 @@ module Lagrange
       return self.clint.options
     end
 
-    def add_usage_spacer
-      usage_messages << ""
-    end
-
     def add_usage_form(val)
       required = val[:required] || []
       optional = val[:optional] || []
@@ -54,14 +50,6 @@ module Lagrange
         optional.map { |option_set| "[#{option_set.join('|')}]" }.join(' ')
       ].reject { |s| s.blank? }.join(' ')
       usage_messages << "#{USAGE_PREFIX}#{File.basename(toolname)} #{argument_spec}"
-    end
-
-    def add_usage_heading(val)
-      val = val.ensure_array
-      add_usage_spacer
-      val.each do |line|
-        usage_messages << line
-      end
     end
 
     def add_option_with_help(option_variants, message, add_usage_form = false)
@@ -82,18 +70,6 @@ module Lagrange
       end
       self.clint.options option_map
       self.add_usage_form({ required: [option_variants] }) if(add_usage_form)
-    end
-
-    def add_help_spacer
-      help_messages << ""
-    end
-
-    def add_help_heading(val)
-      val = val.ensure_array
-      add_help_spacer
-      val.each do |line|
-        help_messages << line
-      end
     end
 
     attr_reader :toolname, :usage_messages, :processed_help_messages
