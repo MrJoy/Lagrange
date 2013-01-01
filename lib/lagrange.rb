@@ -49,6 +49,7 @@ module Lagrange
     # Support logic for specific file formats...
     require 'lagrange/file_types/json'
     require 'lagrange/file_types/webloc'
+    require 'lagrange/file_types/plain_text'
   end
 
   def self.init!(interface_name = nil)

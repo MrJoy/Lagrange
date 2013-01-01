@@ -62,7 +62,7 @@ when :import
   if(import_file.absolute =~ /\.(webloc|ftploc)$/)
     additions << Lagrange::FileTypes::Webloc.read(import_file.absolute)
   else
-    additions += File.readlines(import_file.absolute).map { |line| line.chomp }
+    additions += Lagrange::FileTypes::PlainText.read(import_file.absolute)
   end
 
   Lagrange.ensure_clean(data_file) unless(OPTIONS[:defer])
@@ -73,33 +73,30 @@ when :import
     current_data = []
   end
 
-  # Don't count (effectively) blank lines as "invalid"...
-  additions = additions.reject { |line| line.strip == "" }
-
-  raw_count = additions.count
-  additions = additions.
-    map { |line| line.strip }.
-    map { |line| (Lagrange::DataTypes::URLs.parse(line) rescue nil) }.
-    reject { |uri| uri.nil? || uri.scheme.nil? }.
-    map { |uri| uri.to_s }
-
-  if(raw_count != additions.count)
-    Lagrange.logger.warn("Not adding #{raw_count-additions.count} records out of #{raw_count} due to lack of well-formedness!")
-    OPTIONS[:delete] = false
-  end
-
+  template = { created_at: DateTime.now.utc }
   additions = additions.map do |a_url|
-    cleansed_url = Lagrange::DataTypes::URLs.cleanup(a_url).to_s
-    {
-      url: a_url,
+    cleansed_url = Lagrange::DataTypes::URLs.cleanup(a_url[:url]).to_s
+    template.merge(a_url.merge({
+      updated_at: DateTime.now.utc,
       cleansed_url: cleansed_url,
       uuid: Lagrange::DataTypes::URLs.uuid(cleansed_url),
-    }
+    }))
   end
 
   # TODO: We should probably support some semblence of updating as well...
-  current_urls = Set.new(current_data.map { |bookmark| bookmark[:cleansed_url] })
-  creates = additions.reject { |bookmark| current_urls.include?(bookmark[:cleansed_url]) }
+  current_urls = Hash[current_data.map { |bookmark| [bookmark[:cleansed_url], bookmark] }]
+  updates = Hash[additions.select { |bookmark| current_urls.has_key?(bookmark[:cleansed_url]) }.map { |bookmark| [bookmark[:cleansed_url], bookmark] }]
+  current_data = current_data.map do |a_url|
+    if(updates[a_url[:cleansed_url]])
+      ca = a_url[:created_at]
+      a_url.merge!(updates[a_url[:cleansed_url]])
+      a_url[:created_at] = ca if(ca)
+      puts a_url.inspect
+    end
+    a_url
+  end
+
+  creates = additions.reject { |bookmark| current_urls.has_key?(bookmark[:cleansed_url]) }
   if(additions.count != creates.count)
     Lagrange.logger.warn("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
   end

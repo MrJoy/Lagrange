@@ -1,7 +1,17 @@
 module Lagrange
   module FileTypes
     module Webloc
+      ##
+      # Returns a hash containing `:url`, `:title`, `:created_at`,
+      # `:updated_at` corresponding to the URL, filename (without extension),
+      # ctime, and mtime respectively.
+      #
+      # Will attempt to read resource-fork based .webloc/.ftploc files but this
+      # will only work if you have DeRez installed, which comes with Xcode.
+      #
       def self.read(fname)
+        stat_data = File.stat(fname)
+
         if(File.size(fname) == 0)
           url = raw_resource_fork = `DeRez -e -only 'url ' #{fname.shellescape} | fgrep '$"'`.
             split(/\n/).
@@ -9,17 +19,34 @@ module Lagrange
             flatten.
             map { |hexcode| hexcode.to_i(16).chr }.
             join('').
-            chomp
+            chomp.
+            strip
           if(url.blank?)
             raise "Couldn't retrieve URL from webloc/ftploc's resource fork via DeRez.  Do you have the developer tools installed?"
           end
-          return url
+          return {
+            url: url,
+            title: fname.sub(/\.(webloc|ftploc)$/, ''),
+            created_at: stat_data.ctime.to_datetime.utc,
+            updated_at: stat_data.mtime.to_datetime.utc
+          }
         else
           raw_data = `plutil -convert xml1 -o - -s #{fname.shellescape}`
-          return self.parse(raw_data)
+          return {
+            url: self.parse(raw_data),
+            title: fname.sub(/\.(webloc|ftploc)$/, ''),
+            created_at: stat_data.ctime.to_datetime.utc,
+            updated_at: stat_data.mtime.to_datetime.utc
+          }
         end
       end
 
+      ##
+      # Parse the contents of a plist-based based .webloc/.ftploc, provided
+      # that the contents are in XML form.
+      #
+      # Returns the URL value as a string.
+      #
       def self.parse(contents)
         plist_data = Plist::parse_xml(contents)
         raise "Couldn't parse .webloc/.ftploc file!" if(plist_data.nil?)
@@ -28,11 +55,7 @@ module Lagrange
           Lagrange.logger.warn("Got unknown keys in webloc: #{unknown_keys.join(', ')}")
         end
         raise "Couldn't find a URL in .webloc/.ftploc file!" if(plist_data["URL"].blank?)
-        return plist_data["URL"]
-      end
-
-      def self.synthesize(contents)
-        raise "Not implemented!"
+        return plist_data["URL"].strip
       end
     end
   end
