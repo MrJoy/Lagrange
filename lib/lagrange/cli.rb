@@ -63,11 +63,6 @@ module Lagrange
       end
     end
 
-    def add_option_with_usage_form(option_variants, message)
-      self.add_usage_form({ required: [option_variants] })
-      self.add_help_for_option(option_variants, message)
-    end
-
     def add_option_with_help(option_variants, message, add_usage_form = false)
       option_variants = [option_variants] unless(option_variants.is_a?(Array))
       help_messages << [option_variants, message]
@@ -86,11 +81,6 @@ module Lagrange
       end
       self.clint.options option_map
       self.add_usage_form({ required: [option_variants] }) if(add_usage_form)
-    end
-
-    def add_help_for_option(option_variants, message)
-      option_variants = [option_variants] unless(option_variants.is_a?(Array))
-      help_messages << [option_variants, message]
     end
 
     def add_help_spacer
