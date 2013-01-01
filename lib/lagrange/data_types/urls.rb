@@ -27,11 +27,6 @@ module Lagrange
         return uri.normalize
       end
 
-      def self.is_valid?(uri)
-        uri = parse(uri) rescue nil
-        return uri.nil? || uri.scheme.nil?
-      end
-
       def self.cleanup(uri)
         uri = canonicalize(parse(uri))
         uri.host = host_mappings[uri.host] || uri.host
