@@ -48,7 +48,6 @@ when :default
       description: post.description,
       tags: post.tag,
       created_at: post.time.to_datetime.utc,
-      pinboard_uuid: post.hash,
     }
   end.sort { |a, b| a[:uuid] <=> b[:uuid] }
 
