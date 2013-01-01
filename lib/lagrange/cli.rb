@@ -54,7 +54,7 @@ module Lagrange
       usage_messages << "#{USAGE_PREFIX}#{File.basename(toolname)} #{argument_spec}"
     end
 
-    def add_option_with_help(option_variants, message, add_usage_form = false)
+    def add_option_with_help(option_variants, message)
       option_variants = [option_variants] unless(option_variants.is_a?(Array))
       help_messages << [option_variants, message]
 
@@ -71,7 +71,6 @@ module Lagrange
         end
       end
       self.clint.options option_map
-      self.add_usage_form({ required: [option_variants] }) if(add_usage_form)
     end
 
     attr_reader :toolname, :usage_messages, :processed_help_messages
