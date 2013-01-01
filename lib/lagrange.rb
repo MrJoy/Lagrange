@@ -27,6 +27,7 @@ module Lagrange
     require 'shellwords'
     require 'fileutils'
     require 'ostruct'
+    require 'yajl'
     require 'multi_json'
     require 'active_support/all'
     require 'virtus'

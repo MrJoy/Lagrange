@@ -22,7 +22,7 @@ options = ["-a <name>", "--as=<name>"]
 Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
 Lagrange::CLI.add_help_for_option(
   options,
-  "Save the data under the name repo/#{Lagrange::MiscURLs::MODULE_NAME}/<name>.txt.  Defaults to '#{Lagrange::MiscURLs::DEFAULT_DATASET}'."
+  "Save the data under the name repo/#{Lagrange::MiscURLs::MODULE_NAME}/<name>.json.  Defaults to '#{Lagrange::MiscURLs::DEFAULT_DATASET}'."
 )
 Lagrange::CLI.clint.options as: String, a: :as
 
@@ -103,13 +103,13 @@ unless(snapshot)
 end
 
 misc_dir = Lagrange.module_directory(Lagrange::MiscURLs::MODULE_NAME)
-data_file = Lagrange.data_file(misc_dir, "#{import_as}.yml")
+data_file = Lagrange.data_file(misc_dir, "#{import_as}.json")
 
 Lagrange.ensure_clean(data_file) unless(defer || snapshot)
 
 unless(snapshot)
   if(File.exist?(data_file.absolute))
-    current_data = YAML.parse(File.readlines(data_file.absolute).join).transform
+    current_data = MultiJson.load(File.read(data_file.absolute), symbolize_keys: true)
   else
     current_data = []
   end
@@ -150,7 +150,8 @@ unless(snapshot)
   current_data = current_data.sort { |a, b| a[:uuid] <=> b[:uuid] }
 
   File.open(data_file.absolute, "w") do |f|
-    f.write(current_data.to_yaml)
+    f.write(MultiJson.dump(current_data, pretty: true))
+    f.write("\n")
   end
 end
 
