@@ -6,6 +6,9 @@ gem 'clint'
 
 gem 'addressable', '~> 2.2.6', require: false
 gem 'json'
+gem 'plist', '~> 3.1.0'
+# See this for info relevant to parsing binary plists natively:
+# https://gist.github.com/303378
 
 # Syncing Contacts:
 #   https://github.com/mislav/contacts
