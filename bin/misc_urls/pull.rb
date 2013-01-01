@@ -74,7 +74,7 @@ unless(snapshot)
   STDERR.puts("Reading #{import_file.absolute}...")
   if(import_file.absolute =~ /\.(webloc|ftploc)$/)
     if(File.size(import_file.absolute) == 0)
-      url = raw_resource_fork = `DeRez -e -only 'url ' #{import_file.absolute_escaped} | fgrep '$"'`.
+      url = raw_resource_fork = `DeRez -e -only 'url ' #{import_file.absolute.shellescape} | fgrep '$"'`.
         split(/\n/).
         map { |line| line.gsub(/^[ \t]+\$"(.*?)".*$/, '\1').gsub(/([0-9A-F]{2})/, '\1 ').split(/\s+/) }.
         flatten.
@@ -86,7 +86,7 @@ unless(snapshot)
       end
       additions << url
     else
-      raw_data = `plutil -convert xml1 -o - -s #{import_file.absolute_escaped}`
+      raw_data = `plutil -convert xml1 -o - -s #{import_file.absolute.shellescape}`
       plist_data = Plist::parse_xml(raw_data)
       raise "Couldn't parse #{import_file.absolute}!" if(plist_data.nil?)
       unknown_keys = plist_data.keys - ["URL"]

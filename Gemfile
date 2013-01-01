@@ -1,13 +1,14 @@
 source :gemcutter
 
-gem 'virtus',      require: false
+gem 'activesupport', require: false
+gem 'virtus',        require: false
 
-gem 'grit',        require: false
-gem 'clint',       require: false
+gem 'grit',          require: false
+gem 'clint',         require: false
 
-gem 'addressable', require: false
-gem 'json',        require: false
-gem 'plist',       require: false
+gem 'addressable',   require: false
+gem 'json',          require: false
+gem 'plist',         require: false
 # See this for info relevant to parsing binary plists natively:
 # https://gist.github.com/303378
 

@@ -77,9 +77,7 @@ module Lagrange
       absolute_path=File.expand_path(short_path)
       @repo = OpenStruct.new({
         short: short_path,
-        short_escaped: Shellwords.shellescape(short_path),
         absolute: absolute_path,
-        absolute_escaped: Shellwords.shellescape(absolute_path),
       })
       self.init_repository!(@repo)
     end
@@ -96,7 +94,7 @@ module Lagrange
       # TODO: Use grit!
       STDERR.puts("Initializing repository...")
       system(%Q{
-        cd #{repo.absolute_escaped}
+        cd #{repo.absolute.shellescape}
         git init .
         git commit --allow-empty -m "Initial commit."
       }) || raise("Couldn't initialize git repository!")
@@ -108,9 +106,7 @@ module Lagrange
 
     module_dir = OpenStruct.new({
       absolute: absolute_dir,
-      absolute_escaped: Shellwords.shellescape(absolute_dir),
       relative: module_name,
-      relative_escaped: Shellwords.shellescape(module_name),
     })
 
     unless(File.directory?(module_dir.absolute))
@@ -123,7 +119,6 @@ module Lagrange
   def self.raw_file(filename)
     data = OpenStruct.new({
       absolute: File.expand_path(filename),
-      absolute_escaped: Shellwords.shellescape(File.expand_path(filename)),
     })
 
     return data
@@ -133,7 +128,6 @@ module Lagrange
     absolute_name = File.join(Lagrange::repository.absolute, filename)
     data = OpenStruct.new({
       absolute: absolute_name,
-      absolute_escaped: Shellwords.shellescape(absolute_name),
     })
 
     return data
@@ -144,9 +138,7 @@ module Lagrange
     absolute_name = File.join(Lagrange::repository.absolute, relative_name)
     data = OpenStruct.new({
       relative: relative_name,
-      relative_escaped: Shellwords.shellescape(relative_name),
       absolute: absolute_name,
-      absolute_escaped: Shellwords.shellescape(absolute_name),
       module_home: module_dir,
     })
 
@@ -156,7 +148,7 @@ module Lagrange
   def self.ensure_clean(file)
     if(File.exist?(file.absolute))
       # TODO: Use grit!
-      status = `cd #{Lagrange::repository.absolute_escaped}; git status --porcelain #{file.relative_escaped}`.chomp.split(/\s+/).first || ""
+      status = `cd #{Lagrange::repository.absolute.shellescape}; git status --porcelain #{file.relative.shellescape}`.chomp.split(/\s+/).first || ""
       raise "Uh oh!  File '#{file.absolute}' is dirty -- please ensure it's clean before trying to import more changes!  Got status code of '#{status}'." if(status != "")
     end
   end
@@ -165,9 +157,9 @@ module Lagrange
     # TODO: Use Grit!
     STDERR.puts("Snapshotting file in repo: #{file.relative}")
     system(%Q{
-      cd #{Lagrange::repository.absolute_escaped} &&
-      git add #{file.relative_escaped} &&
-      git commit -m "Snapshotting, via #{Lagrange::CLI.toolname}" -- #{file.relative_escaped}
+      cd #{Lagrange::repository.absolute.shellescape} &&
+      git add #{file.relative.shellescape} &&
+      git commit -m "Snapshotting, via #{Lagrange::CLI.toolname}" -- #{file.relative.shellescape}
     })# || STDERR.puts("Had nothing to do, or got an error...")
   end
 end
