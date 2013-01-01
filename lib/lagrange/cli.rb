@@ -18,6 +18,7 @@ module Lagrange
 
     def parse_options(opts)
       self.clint.parse(opts)
+      self.process_help_messages
 
       continue_flag = true
       if(self.clint.options[:version])
@@ -95,7 +96,7 @@ module Lagrange
       end
     end
 
-    attr_reader :toolname
+    attr_reader :toolname, :usage_messages, :processed_help_messages
   protected
 
     LAGRANGE_ASSUMED_TERM_WIDTH=79
@@ -106,8 +107,49 @@ module Lagrange
     OPT_SUFFIX="    "
     GAP_OVERHEAD = OPT_PREFIX.length + OPT_SUFFIX.length
 
-    attr_writer :toolname
-    attr_accessor :usage_messages, :help_messages, :has_parsed_options
+    attr_writer :toolname, :usage_messages, :processed_help_messages
+    attr_accessor :help_messages, :has_parsed_options
+
+    def process_help_messages
+      msgs = self.help_messages.map do |line|
+        if(line.is_a?(Array))
+          [line.first.ensure_array.join(", "), line.last.ensure_array]
+        else
+          line
+        end
+      end
+
+      max_option_length = msgs.
+        map { |line| line.is_a?(Array) ? line.first.length : 0 }.
+        max
+
+      prefix=OPT_PREFIX + (" " * max_option_length) + OPT_SUFFIX
+
+      self.processed_help_messages = msgs.map do |line|
+        if(line.is_a?(Array))
+          options = line.first
+
+          msg = line.last.
+            map { |l| l.word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - prefix.length).split(/\n/) }.
+            flatten
+
+          padding_length = prefix.length - (GAP_OVERHEAD + options.length)
+          padding = " " * padding_length
+          line = [
+            "#{OPT_PREFIX}#{options}#{padding}#{OPT_SUFFIX}#{msg.shift}",
+            msg.map { |l| "#{prefix}#{l}" }
+          ].flatten.join("\n")
+        elsif(!line.blank?)
+          line = line.
+            word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - OPT_PREFIX.length).
+            split(/\n/).
+            map { |l| "#{OPT_PREFIX}#{l}" }.
+            join("\n")
+        else
+          line
+        end
+      end
+    end
 
     def clint
       @clint ||= begin
@@ -116,45 +158,7 @@ module Lagrange
           STDERR.puts(self.usage_messages.join("\n"))
         end
         clint.help do
-          msgs = self.help_messages.map do |line|
-            if(line.is_a?(Array))
-              [line.first.ensure_array.join(", "), line.last.ensure_array]
-            else
-              line
-            end
-          end
-
-          max_option_length = msgs.
-            map { |line| line.is_a?(Array) ? line.first.length : 0 }.
-            max
-
-          prefix=OPT_PREFIX + (" " * max_option_length) + OPT_SUFFIX
-
-          processed_messages = msgs.map do |line|
-            if(line.is_a?(Array))
-              options = line.first
-
-              msg = line.last.
-                map { |l| l.word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - prefix.length).split(/\n/) }.
-                flatten
-
-              padding_length = prefix.length - (GAP_OVERHEAD + options.length)
-              padding = " " * padding_length
-              line = [
-                "#{OPT_PREFIX}#{options}#{padding}#{OPT_SUFFIX}#{msg.shift}",
-                msg.map { |l| "#{prefix}#{l}" }
-              ].flatten.join("\n")
-            elsif(!line.blank?)
-              line = line.
-                word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - OPT_PREFIX.length).
-                split(/\n/).
-                map { |l| "#{OPT_PREFIX}#{l}" }.
-                join("\n")
-            else
-              line
-            end
-          end
-          STDERR.puts(processed_messages.join("\n"))
+          STDERR.puts(self.processed_help_messages.join("\n"))
         end
         clint
       end
