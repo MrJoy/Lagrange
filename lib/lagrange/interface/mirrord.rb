@@ -1,4 +1,3 @@
-
 module Lagrange
   module Interface
     module Mirrord
