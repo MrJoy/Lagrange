@@ -4,11 +4,11 @@ class String
 
     left_side = self[0,max_width]
     right_side = self[max_width..-1] || ""
-    if(left_side =~ /[\s\t]/)
-      if(right_side =~ /^[\s\t]+/)
+    if(left_side =~ /[ \t]/)
+      if(right_side =~ /^[ \t]+/)
         right_side = right_side.lstrip.word_wrap(max_width)
       else
-        left_side =~ /^(.*)[\s\t]+([^\s\t]*)?$/
+        left_side =~ /^(.*)[ \t]+([^ \t]*)?$/
         left_side = $1.rstrip
         remainder = $2
         right_side = "#{remainder}#{right_side}".lstrip.word_wrap(max_width).lstrip
