@@ -6,25 +6,27 @@ Lagrange.init!('safari')
 
 Lagrange::CLI.toolname = __FILE__
 
-options = ["-i <plist>", "--import=<plist>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+IMPORT_OPTIONS=["-i <plist>", "--import=<plist>"]
+Lagrange::CLI.add_option_with_help(
+  IMPORT_OPTIONS,
   [
     "Import the specified Safari bookmarks file.  If this option is ommitted, then Lagrange will look for bookmarks here:",
     Lagrange::Interface::Safari::DEFAULT_BOOKMARKS_PATH_RAW
   ]
 )
-Lagrange::CLI.clint.options import: String, i: :import
 
-options = ["-a <name>", "--as=<name>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
+Lagrange::CLI.add_option_with_help(
+  ALIAS_OPTIONS,
   "Save the data under the name repo/#{Lagrange::Interface::Safari::INTERFACE_NAME}/<name>.xml.  Defaults to '#{Lagrange::Interface::Safari::DEFAULT_DATASET}'."
 )
-Lagrange::CLI.clint.options as: String, a: :as
 
+Lagrange::CLI.add_usage_form({
+  optional: [
+    IMPORT_OPTIONS,
+    ALIAS_OPTIONS,
+  ]
+})
 
 Lagrange::CLI.parse_options
 
@@ -33,7 +35,7 @@ import_as = (Lagrange::CLI.clint.options[:as] != "") ? Lagrange::CLI.clint.optio
 
 raise "Specified file does not exist: #{import_file}" if(!File.exists?(import_file))
 
-raw_data = `plutil -convert xml1 -o - -s #{Shellwords.shellescape(import_file)}`
+raw_data = `plutil -convert xml1 -o - -s #{import_file.shellescape}`
 
 safari_dir = Lagrange.interface_directory(Lagrange::Interface::Safari::INTERFACE_NAME)
 data_file = Lagrange.data_file(safari_dir, "#{import_as}.xml")

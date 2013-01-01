@@ -6,24 +6,31 @@ Lagrange.init!('safari')
 
 Lagrange::CLI.toolname = __FILE__
 
-options = ["-i <name>", "--import=<name>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
-  "Import the specified Safari bookmark set to the native format.  If this option is ommitted, then Lagrange will use the default set named '#{Lagrange::Interface::Safari::INTERFACE_NAME}'.",
+IMPORT_OPTIONS=["-i <name>", "--import=<name>"]
+Lagrange::CLI.add_option_with_help(
+  IMPORT_OPTIONS,
+  "Import the specified Safari bookmark set to the native format.  If this option is ommitted, then Lagrange will use the default set named '#{Lagrange::Interface::Safari::DEFAULT_DATASET}.xml'.",
 )
-Lagrange::CLI.clint.options import: String, i: :import
+
+ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
+Lagrange::CLI.add_option_with_help(
+  ALIAS_OPTIONS,
+  "Save the data under the name repo/#{Lagrange::Interface::Safari::INTERFACE_NAME}/<name>.yml.  Defaults to '#{Lagrange::Interface::Safari::DEFAULT_DATASET}.yml'."
+)
+
+Lagrange::CLI.add_usage_form({ optional: [IMPORT_OPTIONS, ALIAS_OPTIONS] })
 
 Lagrange::CLI.parse_options
 
-import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Interface::Safari::DEFAULT_DATASET
+import_from = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : Lagrange::Interface::Safari::DEFAULT_DATASET
+import_to = (Lagrange::CLI.clint.options[:as] != "") ? Lagrange::CLI.clint.options[:as] : Lagrange::Interface::Safari::DEFAULT_DATASET
 
 safari_dir = Lagrange.interface_directory(Lagrange::Interface::Safari::INTERFACE_NAME)
-filename_tmp=File.join(safari_dir.absolute, "#{import_set}.xml")
-raise "Specified dataset does not exist: #{import_set}" if(!File.exists?(filename_tmp))
-data_file = Lagrange.data_file(safari_dir, "#{import_set}.xml")
+filename_tmp=File.join(safari_dir.absolute, "#{import_from}.xml")
+raise "Specified dataset does not exist: #{import_from}.xml" if(!File.exists?(filename_tmp))
+data_file = Lagrange.data_file(safari_dir, "#{import_from}.xml")
 Lagrange.ensure_clean(data_file)
-native_file = Lagrange.data_file(safari_dir, "#{import_set}.yml")
+native_file = Lagrange.data_file(safari_dir, "#{import_to}.yml")
 Lagrange.ensure_clean(native_file)
 
 raw_data = File.readlines(filename_tmp).join('')

@@ -10,46 +10,49 @@ Lagrange.init!('misc_urls')
 
 Lagrange::CLI.toolname = __FILE__
 
-options = ["-i <file>", "--import=<file>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+IMPORT_OPTIONS = ["-i <file>", "--import=<file>"]
+Lagrange::CLI.add_option_with_help(
+  IMPORT_OPTIONS,
   "Import the specified OSX webloc/ftploc file, or text file.  If the file is a text file, it is presumed to contain one URL per line."
 )
-Lagrange::CLI.clint.options import: String, i: :import
 
-options = ["-a <name>", "--as=<name>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+ALIAS_OPTIONS = ["-a <name>", "--as=<name>"]
+Lagrange::CLI.add_option_with_help(
+  ALIAS_OPTIONS,
   "Save the data under the name repo/#{Lagrange::Interface::MiscURL::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::MiscURL::DEFAULT_DATASET}'."
 )
-Lagrange::CLI.clint.options as: String, a: :as
 
-options = ["-d", "--defer"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+DEFER_OPTIONS = ["-d", "--defer"]
+Lagrange::CLI.add_option_with_help(
+  DEFER_OPTIONS,
   "Don't check to ensure dataset is clean, and don't commit after modifying.  Handy when importing many webloc/ftploc files.  Be sure to use --snapshot afterwards though."
 )
-Lagrange::CLI.clint.options defer: false, d: :defer
 
-options = ["-s", "--snapshot"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
-  "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
-)
-Lagrange::CLI.clint.options snapshot: false, s: :snapshot
-
-options = ["--delete"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+DELETE_OPTIONS = ["--delete"]
+Lagrange::CLI.add_option_with_help(
+  DELETE_OPTIONS,
   "Delete the import file if, and only if it is successfully imported."
 )
-Lagrange::CLI.clint.options delete: false
 
+SNAPSHOT_OPTIONS = ["-s", "--snapshot"]
+Lagrange::CLI.add_option_with_help(
+  SNAPSHOT_OPTIONS,
+  "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
+)
+
+Lagrange::CLI.add_usage_form({
+  required: [IMPORT_OPTIONS],
+  optional: [
+    ALIAS_OPTIONS,
+    DEFER_OPTIONS,
+    DELETE_OPTIONS
+  ]
+})
+
+Lagrange::CLI.add_usage_form({
+  required: [SNAPSHOT_OPTIONS],
+  optional: [ALIAS_OPTIONS]
+})
 
 Lagrange::CLI.parse_options
 OPTIONS = Lagrange::CLI.clint.options

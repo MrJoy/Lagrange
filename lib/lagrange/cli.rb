@@ -1,6 +1,12 @@
 module Lagrange
   module CLI
     LAGRANGE_ASSUMED_TERM_WIDTH=79
+    HELP_OPTIONS=['-?', '-h', '--help']
+    VERSION_OPTIONS=['-v', '--version']
+    USAGE_PREFIX="  "
+    OPT_PREFIX="  "
+    OPT_SUFFIX="    "
+    GAP_OVERHEAD = OPT_PREFIX.length + OPT_SUFFIX.length
 
     def self.init_dependencies!
       return if(defined?(@initialized) && @initialized)
@@ -16,52 +22,51 @@ module Lagrange
           STDERR.puts(self.usage_messages.join("\n"))
         end
         @clint.help do
-          max_option_length = self.help_messages.map do |line|
+          msgs = self.help_messages.map do |line|
             if(line.is_a?(Array))
-              options = line.first.ensure_array.join(", ")
-              options.length
+              [line.first.ensure_array.join(", "), line.last.ensure_array]
             else
-              0
+              line
             end
-          end.max
+          end
 
-          initial_prefix="    "
-          initial_suffix="      "
-          continuing_prefix=initial_prefix + (" " * max_option_length) + initial_suffix
+          max_option_length = msgs.
+            map { |line| line.is_a?(Array) ? line.first.length : 0 }.
+            max
 
-          processed_messages = self.help_messages.map do |line|
+          prefix=OPT_PREFIX + (" " * max_option_length) + OPT_SUFFIX
+
+          processed_messages = msgs.map do |line|
             if(line.is_a?(Array))
-              options = line.first.ensure_array.join(", ")
+              options = line.first
 
-              msg = line.last.ensure_array.
-                map { |l| l.word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - continuing_prefix.length).split(/\n/) }.
+              msg = line.last.
+                map { |l| l.word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - prefix.length).split(/\n/) }.
                 flatten
 
-              padding_length = continuing_prefix.length - (initial_prefix.length + options.length + initial_suffix.length)
+              padding_length = prefix.length - (GAP_OVERHEAD + options.length)
+              padding = " " * padding_length
               line = [
-                "#{initial_prefix}#{options}#{" " * padding_length}#{initial_suffix}#{msg.shift}",
-                msg.map { |l| "#{continuing_prefix}#{l}" }
-              ].join("\n")
-            elsif(line != "")
+                "#{OPT_PREFIX}#{options}#{padding}#{OPT_SUFFIX}#{msg.shift}",
+                msg.map { |l| "#{prefix}#{l}" }
+              ].flatten.join("\n")
+            elsif(!line.blank?)
               line = line.
-                word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - initial_prefix.length).
+                word_wrap(LAGRANGE_ASSUMED_TERM_WIDTH - OPT_PREFIX.length).
                 split(/\n/).
-                map { |l| "#{initial_prefix}#{l}" }.
+                map { |l| "#{OPT_PREFIX}#{l}" }.
                 join("\n")
             else
               line
             end
           end
-          #STDERR.puts("processed_messages=#{processed_messages.inspect}")
           STDERR.puts(processed_messages.join("\n"))
         end
-        @clint.options :help => false, :h => :help, :'?' => :help
-        @clint.options :version => false, :v => :version
-        add_usage_form("[-v|--version] [-?|-h|--help]")
+        add_usage_form({ required: [HELP_OPTIONS + VERSION_OPTIONS] })
 
         add_help_spacer
-        add_help_for_option(["-?", "-h", "--help"], "Show this help message, then exit.")
-        add_help_for_option(["-v", "--version"], "Show version and copyright info.")
+        add_option_with_help(HELP_OPTIONS, "Show this help message, then exit.")
+        add_option_with_help(VERSION_OPTIONS, "Show version and copyright info.")
         add_help_spacer
       end
       return @clint
@@ -73,16 +78,18 @@ module Lagrange
     def self.parse_options
       @clint.parse(ARGV)
 
+      exit_flag = false
       if(@clint.options[:version])
         Lagrange::Version.show_version_info
         STDERR.puts("") if(@clint.options[:help])
-        exit 1
+        exit_flag = true
       end
 
       if(@clint.options[:help])
         @clint.help
-        exit 1
+        exit_flag = true
       end
+      exit(1) if(exit_flag)
     end
 
     def self.add_usage_spacer
@@ -90,10 +97,13 @@ module Lagrange
     end
 
     def self.add_usage_form(val)
-      val = [val] unless(val.is_a?(Array))
-      val.each do |line|
-        usage_messages << "    #{File.basename(toolname)} #{line}"
-      end
+      required = val[:required] || []
+      optional = val[:optional] || []
+      argument_spec = [
+        required.map { |option_set| option_set.join('|') }.join(' '),
+        optional.map { |option_set| "[#{option_set.join('|')}]" }.join(' ')
+      ].reject { |s| s.blank? }.join(' ')
+      usage_messages << "#{USAGE_PREFIX}#{File.basename(toolname)} #{argument_spec}"
     end
 
     def self.add_usage_heading(val)
@@ -102,6 +112,31 @@ module Lagrange
       val.each do |line|
         usage_messages << line
       end
+    end
+
+    def self.add_option_with_usage_form(option_variants, message)
+      self.add_usage_form({ required: [option_variants] })
+      self.add_help_for_option(option_variants, message)
+    end
+
+    def self.add_option_with_help(option_variants, message, add_usage_form = false)
+      option_variants = [option_variants] unless(option_variants.is_a?(Array))
+      help_messages << [option_variants, message]
+
+      option_map = {}
+      option_primary = nil
+      option_variants.sort { |a, b| b.length <=> a.length }.map do |variant|
+        if matches = /^-(?<token>[a-z0-9?\/])(?: <.*?>)?$/i.match(variant)
+          option_map[matches[:token].to_sym] = option_primary.to_sym
+        elsif matches = /^--(?<token>[a-z0-9_-]+)(?<param>=<.*?>)?$/i.match(variant)
+          option_primary = matches[:token].to_sym
+          option_map[option_primary] = matches[:param] ? String : false
+        else
+          raise "Uh, not sure how to handle option '#{variant}'..."
+        end
+      end
+      clint.options option_map
+      self.add_usage_form({ required: [option_variants] }) if(add_usage_form)
     end
 
     def self.add_help_for_option(option_variants, message)

@@ -6,29 +6,33 @@ Lagrange.init!('mirrord')
 
 Lagrange::CLI.toolname = __FILE__
 
-options = ["-i <name>", "--import=<name>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
-  "Import the specified Mirror'd bookmark set to the native format.  If this option is ommitted, then Lagrange will default to naming the data set after the specified username.",
-)
-Lagrange::CLI.clint.options import: String, i: :import
-
-options = ["-u <username>", "--user=<username>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+USER_OPTIONS=["-u <username>", "--user=<username>"]
+Lagrange::CLI.add_option_with_help(
+  USER_OPTIONS,
   "Authenticate using the specified username.",
 )
-Lagrange::CLI.clint.options user: String, u: :user
 
-options = ["-p <password>", "--password=<password>"]
-Lagrange::CLI.add_usage_form("[#{options.join('|')}]")
-Lagrange::CLI.add_help_for_option(
-  options,
+PASSWORD_OPTIONS=["-p <password>", "--password=<password>"]
+Lagrange::CLI.add_option_with_help(
+  PASSWORD_OPTIONS,
   "Authenticate using the specified password.",
 )
-Lagrange::CLI.clint.options password: String, p: :password
+
+ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
+Lagrange::CLI.add_option_with_help(
+  ALIAS_OPTIONS,
+  "Save the data under the name repo/#{Lagrange::Interface::Mirrord::INTERFACE_NAME}/<name>.json.  Defaults to '<username>.json'."
+)
+
+Lagrange::CLI.add_usage_form({
+  required: [
+    USER_OPTIONS,
+    PASSWORD_OPTIONS
+  ],
+  optional: [
+    ALIAS_OPTIONS
+  ]
+})
 
 Lagrange::CLI.parse_options
 
@@ -37,7 +41,7 @@ password = Lagrange::CLI.clint.options[:password]
 
 raise("Must specify user, and password!") unless(username != "" and password != "")
 
-import_set = (Lagrange::CLI.clint.options[:import] != "") ? Lagrange::CLI.clint.options[:import] : username
+import_set = (Lagrange::CLI.clint.options[:as] != "") ? Lagrange::CLI.clint.options[:as] : username
 
 mirrord_dir = Lagrange.interface_directory(Lagrange::Interface::Mirrord::INTERFACE_NAME)
 native_file = Lagrange.data_file(mirrord_dir, "#{import_set}.yml")
