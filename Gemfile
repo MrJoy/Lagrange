@@ -32,6 +32,7 @@ gem 'contacts', require: false
 # Syncing Links:
 #   https://github.com/weppos/www-delicious (We're not dealing with "bundles" right now!)
 #   https://rubygems.org/gems/delicious-cli
+#   https://github.com/29decibel/readit
 gem 'mirrored', require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
 
 #   https://github.com/philnash/bitly (Unfold bit.ly links...)
