@@ -21,7 +21,7 @@ cli.add_options_with_help({
   },
 })
 
-cli.add_usage_form({ required: [:go], optional: [:import, :as] })
+cli.add_usage_form(:default, { required: [:go], optional: [:import, :as] })
 
 exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options

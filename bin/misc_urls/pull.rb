@@ -17,6 +17,7 @@ cli.add_options_with_help({
   as: {
     params: ["-a <name>", "--as=<name>"],
     message: "Save the data under the name repo/#{Lagrange::Interface::MiscURL::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::MiscURL::DEFAULT_DATASET}'.",
+    default: Lagrange::Interface::MiscURL::DEFAULT_DATASET,
   },
   defer: {
     params: ["-d", "--defer"],
@@ -32,12 +33,12 @@ cli.add_options_with_help({
   }
 })
 
-cli.add_usage_form({
+cli.add_usage_form(:import, {
   required: [:import],
   optional: [:as, :defer, :delete],
 })
 
-cli.add_usage_form({
+cli.add_usage_form(:snapshot, {
   required: [:snapshot],
   optional: [:as],
 })
@@ -46,7 +47,7 @@ exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options
 
 import_file = OPTIONS[:import]
-import_as = (OPTIONS[:as] != "") ? OPTIONS[:as] : Lagrange::Interface::MiscURL::DEFAULT_DATASET
+import_as = OPTIONS[:as]
 defer = OPTIONS[:defer]
 snapshot = OPTIONS[:snapshot]
 delete = OPTIONS[:delete]
