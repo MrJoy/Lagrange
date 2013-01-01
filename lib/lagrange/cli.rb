@@ -84,7 +84,7 @@ module Lagrange
           raise "Uh, not sure how to handle option '#{variant}'..."
         end
       end
-      clint.options option_map
+      self.clint.options option_map
       self.add_usage_form({ required: [option_variants] }) if(add_usage_form)
     end
 
