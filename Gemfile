@@ -38,6 +38,7 @@ gem 'pinboard', require: false
 
 #   https://github.com/philnash/bitly (Unfold bit.ly links...)
 #   https://rubygems.org/gems/tagometer (Suggest tags...)
+#   http://citizen428.github.com/unsavory/ (Finding stale links...)
 
 
 ###############################################################################
