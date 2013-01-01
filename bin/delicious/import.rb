@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 LAGRANGE_PATH = File.expand_path('../../../',  __FILE__)
 require File.expand_path("#{LAGRANGE_PATH}/lib/lagrange")
-Lagrange.init!('mirrord')
+Lagrange.init!('delicious')
 
 
 cli = Lagrange::CLI.new(__FILE__)
@@ -15,17 +15,13 @@ cli.add_options_with_help({
     params: ["-p <password>", "--password=<password>"],
     message: "Authenticate using the specified password.",
   },
-  service: {
-    params: ["-s <service>", "--service=<service>"],
-    message: "Contact the specified service (delicious, or pinboard).  Defaults to 'delicious'.",
-  },
   as: {
     params: ["-a <name>", "--as=<name>"],
-    message: "Save the data under the name repo/#{Lagrange::Interface::Mirrord::INTERFACE_NAME}/<name>.json.  Defaults to '<service>'.",
+    message: "Save the data under the name repo/#{Lagrange::Interface::Delicious::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::Delicious::DEFAULT_DATASET}'.",
   },
 })
 
-cli.add_usage_form(:default, { required: [:user, :password], optional: [:service, :as] })
+cli.add_usage_form(:default, { required: [:user, :password], optional: [:as] })
 
 exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options
@@ -35,13 +31,13 @@ when :default
   username = OPTIONS[:user].downcase
   password = OPTIONS[:password]
   service = OPTIONS[:service]
-  import_set = (OPTIONS[:as] != "") ? OPTIONS[:as] : service
+  import_set = (OPTIONS[:as] != "") ? OPTIONS[:as] : Lagrange::Interface::Delicious::DEFAULT_DATASET
 
-  mirrord_dir = Lagrange.interface_directory(Lagrange::Interface::Mirrord::INTERFACE_NAME)
-  native_file = Lagrange.data_file(mirrord_dir, "#{import_set}.json")
+  delicious_dir = Lagrange.interface_directory(Lagrange::Interface::Delicious::INTERFACE_NAME)
+  native_file = Lagrange.data_file(delicious_dir, "#{import_set}.json")
   Lagrange.ensure_clean(native_file)
 
-  Mirrored::Base.establish_connection(service.to_sym, username, password)
+  Mirrored::Base.establish_connection(:delicious, username, password)
   last_update_stamp = Mirrored::Update.last
   tags=Mirrored::Tag.find(:get).map { |tag| tag.name }.sort
   posts=Mirrored::Post.find(:all).map do |post|
