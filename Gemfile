@@ -15,5 +15,8 @@ gem 'plist', '~> 3.1.0'
 #   https://github.com/pengwynn/linkedin
 
 # Syncing Links:
-#   https://github.com/weppos/www-delicious
+#   https://github.com/weppos/www-delicious (We're not dealing with "bundles" right now!)
+#   https://rubygems.org/gems/delicious-cli
+gem 'mirrored', '~> 0.1.3', require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
+
 #   https://github.com/philnash/bitly (Unfold bit.ly links...)

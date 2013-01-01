@@ -1,8 +1,14 @@
 require 'addressable/uri'
 require 'cgi'
+require 'digest/sha1'
 
 module Lagrange
   module URLs
+    def self.uuid(uri)
+      uri = uri.to_s if(uri.is_a?(Addressable::URI))
+      return Digest::SHA1.hexdigest "#{uri.length}\n#{uri}"
+    end
+
     def self.parse(uri)
       return uri if(uri.is_a?(Addressable::URI))
       load_config("urls")
