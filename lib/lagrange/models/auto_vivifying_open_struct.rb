@@ -48,10 +48,6 @@ module Lagrange
         end]
       end
 
-      def to_hash
-        return @table
-      end
-
       protected
 
       def from_hash_shallow(hash)
