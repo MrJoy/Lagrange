@@ -56,7 +56,7 @@ module Lagrange
     end
 
     def add_usage_heading(val)
-      val = [val] unless(val.is_a?(Array))
+      val = val.ensure_array
       add_usage_spacer
       val.each do |line|
         usage_messages << line
@@ -98,7 +98,7 @@ module Lagrange
     end
 
     def add_help_heading(val)
-      val = [val] unless(val.is_a?(Array))
+      val = val.ensure_array
       add_help_spacer
       val.each do |line|
         help_messages << line
