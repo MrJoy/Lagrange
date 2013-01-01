@@ -1,2 +1,9 @@
 /etc
 /to_import
+
+/dist
+
+/.yardoc
+/doc
+
+/coverage

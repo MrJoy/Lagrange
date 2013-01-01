@@ -1,0 +1,9 @@
+features/**/*.feature
+features/**/*.rb
+spec/**/*.rb
+lib/**/*.rb
+-
+README.md
+CHANGELOG.md
+TODO.md
+NOTES.md

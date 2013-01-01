@@ -40,12 +40,15 @@ gem 'mirrored', require: false # ... Magnolia is dead, but pinboard uses Mirror'
 ###############################################################################
 # Development Infrastructure
 ###############################################################################
-gem 'pry',  groups: [:development, :test]
+gem 'yard',           groups: [:development],       require: false, platform: :mri_19
+gem 'yard-cucumber',  groups: [:development],       require: false, platform: :mri_19
+gem 'kramdown',       groups: [:development],       require: false, platform: :mri_19
+gem 'pry',            groups: [:development, :test]
 
 
 ###############################################################################
 # Test Infrastructure
 ###############################################################################
-# gem 'rspec',        group: [:test], require: false
-# gem 'simplecov',    group: [:test], require: false
-# gem 'factory_girl', group: [:test], require: false
+gem 'rspec',              group: [:test], require: false
+gem 'simplecov',          group: [:test], require: false
+gem 'cucumber',           group: [:test], require: false

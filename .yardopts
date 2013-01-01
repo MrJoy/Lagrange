@@ -1,0 +1,4 @@
+--no-private
+--markup-provider kramdown
+--markup markdown
+--plugin yard-cucumber
