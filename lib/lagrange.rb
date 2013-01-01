@@ -166,13 +166,13 @@ module Lagrange
     end
   end
 
-  def self.snapshot(file, cli)
+  def self.snapshot(file, toolname)
     # TODO: Use Grit!
     self.logger.info("Snapshotting file in repo: #{file.relative}")
     system(%Q{
       cd #{Lagrange::repository.absolute.shellescape} &&
       git add #{file.relative.shellescape} &&
-      git commit -m "Snapshotting, via #{cli.toolname}" -- #{file.relative.shellescape}
+      git commit -m "Snapshotting, via #{toolname}" -- #{file.relative.shellescape}
     })# || self.logger.warn("Had nothing to do, or got an error...")
   end
 end

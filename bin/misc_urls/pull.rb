@@ -42,68 +42,9 @@ cli.add_usage_form(:snapshot, {
 exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options
 
-misc_dir = Lagrange.interface_directory(Lagrange::Interface::MiscURL::INTERFACE_NAME)
-data_file = Lagrange.data_file(misc_dir, "#{OPTIONS[:as]}.json")
-
 case cli.usage_form
 when :import
-  import_file = OPTIONS[:import]
-
-  import_file = Lagrange.raw_file(import_file)
-  raise "Specified file does not exist: #{import_file.absolute}" if(!File.exists?(import_file.absolute))
-
-  additions = []
-
-  Lagrange.logger.info("Reading #{import_file.absolute}...")
-  if(import_file.absolute =~ /\.(webloc|ftploc)$/)
-    additions << Lagrange::FileTypes::Webloc.read(import_file.absolute)
-  else
-    additions += Lagrange::FileTypes::PlainText.read(import_file.absolute)
-  end
-
-  Lagrange.ensure_clean(data_file) unless(OPTIONS[:defer])
-
-  if(File.exist?(data_file.absolute))
-    current_data = Lagrange::FileTypes::JSON.read(data_file.absolute)
-  else
-    current_data = []
-  end
-
-  template = { created_at: DateTime.now.utc }
-  additions = additions.map do |a_url|
-    cleansed_url = Lagrange::DataTypes::URLs.cleanup(a_url[:url]).to_s
-    template.merge(a_url.merge({
-      cleansed_url: cleansed_url,
-      uuid: Lagrange::DataTypes::URLs.uuid(cleansed_url),
-    }))
-  end
-
-  # TODO: We should probably support some semblence of updating as well...
-  current_urls = Hash[current_data.map { |bookmark| [bookmark[:cleansed_url], bookmark] }]
-  updates = Hash[additions.select { |bookmark| current_urls.has_key?(bookmark[:cleansed_url]) }.map { |bookmark| [bookmark[:cleansed_url], bookmark] }]
-  current_data = current_data.map do |a_url|
-    if(updates[a_url[:cleansed_url]])
-      ca = a_url[:created_at]
-      a_url.merge!(updates[a_url[:cleansed_url]])
-      a_url[:created_at] = ca if(ca)
-    end
-    a_url
-  end
-
-  creates = additions.reject { |bookmark| current_urls.has_key?(bookmark[:cleansed_url]) }
-  if(additions.count != creates.count)
-    Lagrange.logger.warn("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
-  end
-
-  current_data += creates
-  current_data = current_data.sort { |a, b| a[:uuid] <=> b[:uuid] }
-
-  File.open(data_file.absolute, "wb") do |f|
-    f.write(Lagrange::FileTypes::JSON.synthesize(current_data))
-  end
-
-  Lagrange::snapshot(data_file, cli) unless(OPTIONS[:defer])
-
+  Lagrange::Interface::MiscURL.import(OPTIONS[:import], OPTIONS[:as], OPTIONS[:defer], cli.toolname)
 when :snapshot
-  Lagrange::snapshot(data_file, cli)
+  Lagrange::Interface::MiscURL.snapshot(OPTIONS[:as], cli.toolname)
 end
