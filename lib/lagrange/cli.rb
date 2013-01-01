@@ -8,12 +8,20 @@ module Lagrange
 
       self.toolname = toolname
 
-      add_usage_form({ required: [HELP_OPTIONS + VERSION_OPTIONS] })
+      self.help_messages << ""
+      add_options_with_help({
+        help: {
+          params: HELP_OPTIONS,
+          message: "Show this help message, then exit.",
+        },
+        version: {
+          params: VERSION_OPTIONS,
+          message: "Show version and copyright info.",
+        }
+      })
+      self.help_messages << ""
 
-      self.help_messages << ""
-      add_option_with_help(HELP_OPTIONS, "Show this help message, then exit.")
-      add_option_with_help(VERSION_OPTIONS, "Show version and copyright info.")
-      self.help_messages << ""
+      add_usage_form({ optional: [:help, :version] })
     end
 
     def parse_options(opts)
@@ -45,35 +53,25 @@ module Lagrange
     end
 
     def add_usage_form(val)
+      any = val[:any] || []
       required = val[:required] || []
       optional = val[:optional] || []
       argument_spec = [
-        required.map { |option_set| option_set.join('|') }.join(' '),
-        optional.map { |option_set| "[#{option_set.join('|')}]" }.join(' ')
+        required.map { |name| self.option_map[name][:params] }.map { |option_set| option_set.join('|') }.join(' '),
+        optional.map { |name| self.option_map[name][:params] }.map { |option_set| "[#{option_set.join('|')}]" }.join(' ')
       ].reject { |s| s.blank? }.join(' ')
       usage_messages << "#{USAGE_PREFIX}#{File.basename(toolname)} #{argument_spec}"
     end
 
-    def add_option_with_help(option_variants, message)
-      option_variants = [option_variants] unless(option_variants.is_a?(Array))
-      help_messages << [option_variants, message]
-
-      option_map = {}
-      option_primary = nil
-      option_variants.sort { |a, b| b.length <=> a.length }.map do |variant|
-        if matches = /^-(?<token>[a-z0-9?\/])(?: <.*?>)?$/i.match(variant)
-          option_map[matches[:token].to_sym] = option_primary.to_sym
-        elsif matches = /^--(?<token>[a-z0-9_-]+)(?<param>=<.*?>)?$/i.match(variant)
-          option_primary = matches[:token].to_sym
-          option_map[option_primary] = matches[:param] ? String : false
-        else
-          raise "Uh, not sure how to handle option '#{variant}'..."
-        end
+    def add_options_with_help(options)
+      self.option_map = options
+      self.option_map.each do |name, config|
+        self.add_option_with_help(config[:params], config[:message])
       end
-      self.clint.options option_map
     end
 
     attr_reader :toolname, :usage_messages, :processed_help_messages
+
   protected
 
     LAGRANGE_ASSUMED_TERM_WIDTH=79
@@ -85,7 +83,7 @@ module Lagrange
     GAP_OVERHEAD = OPT_PREFIX.length + OPT_SUFFIX.length
 
     attr_writer :toolname, :usage_messages, :processed_help_messages
-    attr_accessor :help_messages, :has_parsed_options
+    attr_accessor :option_map, :help_messages, :has_parsed_options
 
     def process_help_messages
       msgs = self.help_messages.map do |line|
@@ -143,6 +141,25 @@ module Lagrange
         end
         clint
       end
+    end
+
+    def add_option_with_help(option_variants, message)
+      option_variants = [option_variants] unless(option_variants.is_a?(Array))
+      help_messages << [option_variants, message]
+
+      option_map = {}
+      option_primary = nil
+      option_variants.sort { |a, b| b.length <=> a.length }.map do |variant|
+        if matches = /^-(?<token>[a-z0-9?\/])(?: <.*?>)?$/i.match(variant)
+          option_map[matches[:token].to_sym] = option_primary.to_sym
+        elsif matches = /^--(?<token>[a-z0-9_-]+)(?<param>=<.*?>)?$/i.match(variant)
+          option_primary = matches[:token].to_sym
+          option_map[option_primary] = matches[:param] ? String : false
+        else
+          raise "Uh, not sure how to handle option '#{variant}'..."
+        end
+      end
+      self.clint.options option_map
     end
   end
 end

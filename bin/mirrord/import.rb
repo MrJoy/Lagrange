@@ -6,33 +6,22 @@ Lagrange.init!('mirrord')
 
 cli = Lagrange::CLI.new(__FILE__)
 
-USER_OPTIONS=["-u <username>", "--user=<username>"]
-cli.add_option_with_help(
-  USER_OPTIONS,
-  "Authenticate using the specified username.",
-)
-
-PASSWORD_OPTIONS=["-p <password>", "--password=<password>"]
-cli.add_option_with_help(
-  PASSWORD_OPTIONS,
-  "Authenticate using the specified password.",
-)
-
-ALIAS_OPTIONS=["-a <name>", "--as=<name>"]
-cli.add_option_with_help(
-  ALIAS_OPTIONS,
-  "Save the data under the name repo/#{Lagrange::Interface::Mirrord::INTERFACE_NAME}/<name>.json.  Defaults to '<username>.json'."
-)
-
-cli.add_usage_form({
-  required: [
-    USER_OPTIONS,
-    PASSWORD_OPTIONS
-  ],
-  optional: [
-    ALIAS_OPTIONS
-  ]
+cli.add_options_with_help({
+  user: {
+    params: ["-u <username>", "--user=<username>"],
+    message: "Authenticate using the specified username.",
+  },
+  password: {
+    params: ["-p <password>", "--password=<password>"],
+    message: "Authenticate using the specified password.",
+  },
+  as: {
+    params: ["-a <name>", "--as=<name>"],
+    message: "Save the data under the name repo/#{Lagrange::Interface::Mirrord::INTERFACE_NAME}/<name>.json.  Defaults to '<username>.json'.",
+  },
 })
+
+cli.add_usage_form({ required: [:user, :password], optional: [:as] })
 
 exit(1) unless(cli.parse_options(ARGV))
 OPTIONS = cli.options

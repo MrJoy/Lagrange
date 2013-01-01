@@ -9,48 +9,37 @@ Lagrange.init!('misc_urls')
 
 cli = Lagrange::CLI.new(__FILE__)
 
-IMPORT_OPTIONS = ["-i <file>", "--import=<file>"]
-cli.add_option_with_help(
-  IMPORT_OPTIONS,
-  "Import the specified OSX webloc/ftploc file, or text file.  If the file is a text file, it is presumed to contain one URL per line."
-)
-
-ALIAS_OPTIONS = ["-a <name>", "--as=<name>"]
-cli.add_option_with_help(
-  ALIAS_OPTIONS,
-  "Save the data under the name repo/#{Lagrange::Interface::MiscURL::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::MiscURL::DEFAULT_DATASET}'."
-)
-
-DEFER_OPTIONS = ["-d", "--defer"]
-cli.add_option_with_help(
-  DEFER_OPTIONS,
-  "Don't check to ensure dataset is clean, and don't commit after modifying.  Handy when importing many webloc/ftploc files.  Be sure to use --snapshot afterwards though."
-)
-
-DELETE_OPTIONS = ["--delete"]
-cli.add_option_with_help(
-  DELETE_OPTIONS,
-  "Delete the import file if, and only if it is successfully imported."
-)
-
-SNAPSHOT_OPTIONS = ["-s", "--snapshot"]
-cli.add_option_with_help(
-  SNAPSHOT_OPTIONS,
-  "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
-)
-
-cli.add_usage_form({
-  required: [IMPORT_OPTIONS],
-  optional: [
-    ALIAS_OPTIONS,
-    DEFER_OPTIONS,
-    DELETE_OPTIONS
-  ]
+cli.add_options_with_help({
+  import: {
+    params: ["-i <file>", "--import=<file>"],
+    message: "Import the specified OSX webloc/ftploc file, or text file.  If the file is a text file, it is presumed to contain one URL per line.",
+  },
+  as: {
+    params: ["-a <name>", "--as=<name>"],
+    message: "Save the data under the name repo/#{Lagrange::Interface::MiscURL::INTERFACE_NAME}/<name>.json.  Defaults to '#{Lagrange::Interface::MiscURL::DEFAULT_DATASET}'.",
+  },
+  defer: {
+    params: ["-d", "--defer"],
+    message: "Don't check to ensure dataset is clean, and don't commit after modifying.  Handy when importing many webloc/ftploc files.  Be sure to use --snapshot afterwards though.",
+  },
+  delete: {
+    params: ["--delete"],
+    message: "Delete the import file if, and only if it is successfully imported."
+  },
+  snapshot: {
+    params: ["-s", "--snapshot"],
+    message: "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
+  }
 })
 
 cli.add_usage_form({
-  required: [SNAPSHOT_OPTIONS],
-  optional: [ALIAS_OPTIONS]
+  required: [:import],
+  optional: [:as, :defer, :delete],
+})
+
+cli.add_usage_form({
+  required: [:snapshot],
+  optional: [:as],
 })
 
 exit(1) unless(cli.parse_options(ARGV))
