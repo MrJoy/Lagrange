@@ -57,7 +57,7 @@ def transform_bookmark(bookmark)
   when "WebBookmarkTypeLeaf"
     url_tmp=Lagrange::DataTypes::URLs.cleanup(bookmark["URLString"]).to_s rescue nil
     if(url_tmp.nil?)
-      STDERR.puts("Skipping invalid bookmark for UUID #{bookmark["WebBookmarkUUID"]}: #{bookmark["URLString"]}")
+      Lagrange.logger.warn("Skipping invalid bookmark for UUID #{bookmark["WebBookmarkUUID"]}: #{bookmark["URLString"]}")
     else
       cleansed_url = Lagrange::DataTypes::URLs.cleanup(bookmark["URLString"]).to_s
       return {

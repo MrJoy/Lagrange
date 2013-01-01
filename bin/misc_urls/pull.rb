@@ -73,7 +73,7 @@ end
 
 additions = []
 unless(snapshot)
-  STDERR.puts("Reading #{import_file.absolute}...")
+  Lagrange.logger.info("Reading #{import_file.absolute}...")
   if(import_file.absolute =~ /\.(webloc|ftploc)$/)
     if(File.size(import_file.absolute) == 0)
       url = raw_resource_fork = `DeRez -e -only 'url ' #{import_file.absolute.shellescape} | fgrep '$"'`.
@@ -94,7 +94,7 @@ unless(snapshot)
       unknown_keys = plist_data.keys - ["URL"]
       if(unknown_keys.count > 0)
         delete = false
-        STDERR.puts("Got unknown keys in webloc: #{unknown_keys.join(', ')}")
+        Lagrange.logger.warn("Got unknown keys in webloc: #{unknown_keys.join(', ')}")
       end
       raise "Couldn't find a URL in #{import_file.absolute}!" if(plist_data["URL"].nil? || plist_data["URL"] == "")
       additions << plist_data["URL"]
@@ -127,7 +127,7 @@ unless(snapshot)
     map { |uri| uri.to_s }
 
   if(raw_count != additions.count)
-    STDERR.puts("Not adding #{raw_count-additions.count} records out of #{raw_count} due to lack of well-formedness!")
+    Lagrange.logger.warn("Not adding #{raw_count-additions.count} records out of #{raw_count} due to lack of well-formedness!")
     delete = false
   end
 
@@ -144,7 +144,7 @@ unless(snapshot)
   current_urls = Set.new(current_data.map { |bookmark| bookmark[:cleansed_url] })
   creates = additions.reject { |bookmark| current_urls.include?(bookmark[:cleansed_url]) }
   if(additions.count != creates.count)
-    STDERR.puts("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
+    Lagrange.logger.warn("Not adding #{additions.count-creates.count} duplicate URLs out of #{additions.count}!")
     delete = false
   end
 

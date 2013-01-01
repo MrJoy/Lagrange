@@ -24,6 +24,7 @@ module Lagrange
 
     # Third party things we depend on...
     require 'set'
+    require 'logger'
     require 'shellwords'
     require 'fileutils'
     require 'ostruct'
@@ -74,6 +75,9 @@ module Lagrange
     end
   end
 
+  def self.logger=(logger); @@logger = logger; end
+  def self.logger; @@logger ||= Logger.new(STDOUT); end
+
   def self.repository
     # TODO: This is rather OSX-specific...  *cough*
     if(@repo.nil?)
@@ -93,10 +97,10 @@ module Lagrange
       repo = self.repository
     end
     unless(File.directory?(repo.absolute))
-      STDERR.puts("Creating repository at: #{repo.short}")
+      self.logger.info("Creating repository at: #{repo.short}")
       FileUtils.mkdir_p(repo.absolute) || raise("Couldn't create data directory in #{repo.short}!")
       # TODO: Use grit!
-      STDERR.puts("Initializing repository...")
+      self.logger.info("Initializing repository...")
       system(%Q{
         cd #{repo.absolute.shellescape}
         git init .
@@ -114,7 +118,7 @@ module Lagrange
     })
 
     unless(File.directory?(interface_dir.absolute))
-      STDERR.puts("Creating directory for interface '#{interface_name}' at: #{interface_dir.absolute}")
+      self.logger.info("Creating directory for interface '#{interface_name}' at: #{interface_dir.absolute}")
       FileUtils.mkdir_p(interface_dir.absolute) || raise("Can't ensure #{interface_dir.absolute} exists!")
     end
     return interface_dir
@@ -159,12 +163,12 @@ module Lagrange
 
   def self.snapshot(file, cli)
     # TODO: Use Grit!
-    STDERR.puts("Snapshotting file in repo: #{file.relative}")
+    self.logger.info("Snapshotting file in repo: #{file.relative}")
     system(%Q{
       cd #{Lagrange::repository.absolute.shellescape} &&
       git add #{file.relative.shellescape} &&
       git commit -m "Snapshotting, via #{cli.toolname}" -- #{file.relative.shellescape}
-    })# || STDERR.puts("Had nothing to do, or got an error...")
+    })# || self.logger.warn("Had nothing to do, or got an error...")
   end
 end
 

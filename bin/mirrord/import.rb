@@ -66,8 +66,8 @@ posts=Mirrored::Post.find(:all).map do |post|
   }
 end.sort { |a, b| a[:uuid] <=> b[:uuid] }
 
-puts "Server Reports Last Update: #{last_update_stamp.strftime("%Y-%m-%d %H:%M:%S %z")}"
-puts "Found #{tags.count} tags, and #{posts.count} posts."
+Lagrange.logger.info "Server Reports Last Update: #{last_update_stamp.strftime("%Y-%m-%d %H:%M:%S %z")}"
+Lagrange.logger.info "Found #{tags.count} tags, and #{posts.count} posts."
 
 File.open(native_file.absolute, "w") do |f|
   f.write({

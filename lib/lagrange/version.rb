@@ -7,9 +7,11 @@ module Lagrange
       return VERSION
     end
 
-    def self.show_version_info
-      STDERR.puts("Lagrange version #{VERSION}")
-      STDERR.puts(COPYRIGHT)
+    def self.extended_version_info
+      return [
+        "Lagrange v.#{VERSION}",
+        COPYRIGHT,
+      ]
     end
   end
 end

@@ -68,7 +68,7 @@ module Lagrange
       end
 
       def self.add_host_mapping(from, to)
-        STDERR.puts("Already have mapping for '#{from}' (to: #{host_mappings[from]}), replacing with: #{to}.") if(!host_mappings[from].nil?)
+        Lagrange.logger.warn("Already have mapping for '#{from}' (to: #{host_mappings[from]}), replacing with: #{to}.") if(!host_mappings[from].nil?)
         host_mappings[from] = to
       end
 
@@ -86,7 +86,7 @@ module Lagrange
           config_files << filename
           filename = Lagrange::config_file(filename)
           if(File.exist?(filename.absolute + ".rb"))
-            STDERR.puts("Reading config file: #{filename.absolute}.rb")
+            Lagrange.logger.info("Reading config file: #{filename.absolute}.rb")
             require filename.absolute
           end
         end

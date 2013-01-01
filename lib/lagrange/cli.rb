@@ -22,8 +22,10 @@ module Lagrange
 
       continue_flag = true
       if(self.clint.options[:version])
-        Lagrange::Version.show_version_info
-        STDERR.puts("") if(self.clint.options[:help])
+        Lagrange::Version.extended_version_info.each do |line|
+          Lagrange.logger.info line
+        end
+        Lagrange.logger.info "" if(self.clint.options[:help])
         continue_flag = false
       end
 
@@ -131,10 +133,14 @@ module Lagrange
       @clint ||= begin
         clint = Clint.new
         clint.usage do
-          STDERR.puts(self.usage_messages.join("\n"))
+          self.usage_messages.each do |line|
+            Lagrange.logger.info line
+          end
         end
         clint.help do
-          STDERR.puts(self.processed_help_messages.join("\n"))
+          self.processed_help_messages.each do |line|
+            Lagrange.logger.info line
+          end
         end
         clint
       end
