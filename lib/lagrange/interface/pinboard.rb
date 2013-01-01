@@ -12,6 +12,11 @@ module Lagrange
       # Pinboard-related data is held.
       #
       INTERFACE_NAME="pinboard".freeze
+
+      ##
+      # Ensure that any code needed by this subsystem is loaded once and only
+      # once.
+      #
       def self.init_dependencies!
         return if(defined?(@initialized) && @initialized)
         @initialized = true
