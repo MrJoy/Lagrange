@@ -52,11 +52,11 @@ describe Lagrange::Models::AutoVivifyingOpenStruct do
     end
   end
 
-  describe "#merge" do
+  describe "#merge!" do
     it "should recursively convert the provided hash" do
       s = Lagrange::Models::AutoVivifyingOpenStruct.new
       s.foo.bar = { baz: { blah: 123 } }
-      s.foo.bar.merge(whatever: { meh: 123 })
+      s.foo.bar.merge!(whatever: { meh: 123 })
 
       recursively_check(s)
     end
@@ -64,10 +64,21 @@ describe Lagrange::Models::AutoVivifyingOpenStruct do
     it "should not care whether keys are symbols or strings" do
       s = Lagrange::Models::AutoVivifyingOpenStruct.new
       s.foo.bar = { baz: { blah: 123 } }
-      s.foo.bar.merge("whatever" => { "meh" => 123 }, "baz" => "something")
+      s.foo.bar.merge!("whatever" => { "meh" => 123 }, "baz" => "something")
 
       recursively_check(s)
     end
+
+    it "should perform a deep merge gracefully" do
+      s = Lagrange::Models::AutoVivifyingOpenStruct.new
+      s.foo = { bar: { baz: { blah: 123 } } }
+      s.foo.merge!({ bar: { meh: 123 }})
+
+      recursively_check(s)
+      s.foo.bar.baz.blah.should eq 123
+      s.foo.bar.meh.should eq 123
+    end
+
   end
 
   describe "#as_json" do

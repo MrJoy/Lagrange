@@ -1,25 +1,41 @@
 module Lagrange
   module Models
-    class AutoVivifyingOpenStruct < OpenStruct
+    class AutoVivifyingOpenStruct
       def initialize(hash = {})
-        super(from_hash_shallow(hash))
+        @table = {}
+        merge!(hash)
       end
 
       def method_missing(*args)
         if(args.length != 1)
           if(args[0] =~ /=$/ && args[1].is_a?(Hash))
-            @table[args[0].to_s.sub(/=$/, '').to_sym] = from_hash(args[1])
+            tmp = @table[args[0].to_s.sub(/=$/, '').to_sym] = from_hash(args[1])
+          elsif(args[0] =~ /=$/)
+            tmp = @table[args[0].to_sym] = args[1]
           else
-            return super(*args)
+            raise "Got a setter method with no parameter: #{args[0]}"
           end
         else
-          @table[args[0].to_sym] ||= AutoVivifyingOpenStruct.new
+          tmp = @table[args[0].to_sym] ||= AutoVivifyingOpenStruct.new
         end
+
+        return tmp
       end
 
-      def merge(hash)
-        from_hash_shallow(hash).each do |key, value|
-          @table[key.to_sym] = value
+      def merge!(hash)
+        hash.each do |key, value|
+          key = key.to_sym
+          value_is_hashlike = value.is_a?(Hash) ||
+                              value.is_a?(AutoVivifyingOpenStruct)
+          if(@table[key].is_a?(AutoVivifyingOpenStruct) && value_is_hashlike)
+            @table[key].merge!(value)
+          else
+            if(value_is_hashlike)
+              @table[key] = from_hash(value)
+            else
+              @table[key] = value
+            end
+          end
         end
       end
 
@@ -29,15 +45,21 @@ module Lagrange
         end]
       end
 
+      def to_hash
+        return @table
+      end
+
       protected
 
       def from_hash_shallow(hash)
+        return hash if(hash.is_a?(AutoVivifyingOpenStruct))
         return Hash[hash.map do |key, value|
           [key.to_sym, value.is_a?(Hash) ? from_hash(value) : value]
         end]
       end
 
       def from_hash(hash)
+        return hash if(hash.is_a?(AutoVivifyingOpenStruct))
         return AutoVivifyingOpenStruct.new(from_hash_shallow(hash))
       end
     end
