@@ -23,10 +23,6 @@ cli.add_options_with_help({
     params: ["-d", "--defer"],
     message: "Don't check to ensure dataset is clean, and don't commit after modifying.  Handy when importing many webloc/ftploc files.  Be sure to use --snapshot afterwards though.",
   },
-  delete: {
-    params: ["--delete"],
-    message: "Delete the import file if, and only if it is successfully imported."
-  },
   snapshot: {
     params: ["-s", "--snapshot"],
     message: "Perform a commit of the specified dataset, without having to import anything.  Handy after importing many webloc/ftploc files using --defer."
@@ -35,7 +31,7 @@ cli.add_options_with_help({
 
 cli.add_usage_form(:import, {
   required: [:import],
-  optional: [:as, :defer, :delete],
+  optional: [:as, :defer],
 })
 
 cli.add_usage_form(:snapshot, {
@@ -105,8 +101,6 @@ when :import
   File.open(data_file.absolute, "wb") do |f|
     f.write(Lagrange::FileTypes::JSON.synthesize(current_data))
   end
-
-  File.unlink(import_file.absolute) if(OPTIONS[:delete])
 
   Lagrange::snapshot(data_file, cli) unless(OPTIONS[:defer])
 
