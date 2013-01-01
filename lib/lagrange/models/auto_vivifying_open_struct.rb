@@ -12,8 +12,11 @@ module Lagrange
             tmp = @table[args[0].to_s.sub(/=$/, '').to_sym] = from_hash(args[1])
           elsif(args[0] =~ /=$/)
             tmp = @table[args[0].to_sym] = args[1]
-          else
-            raise "Got a setter method with no parameter: #{args[0]}"
+          # NOTE: The following else condition appears to be impossible despite
+          # NOTE: my best efforts at inducing it with all sorts of chicanery,
+          # NOTE: including "foo.send(:'bar=')" and such.
+          # else
+          #   raise "Got a setter method with no parameter: #{args[0]}"
           end
         else
           tmp = @table[args[0].to_sym] ||= AutoVivifyingOpenStruct.new
