@@ -25,13 +25,13 @@ gem 'yajl-ruby',      require: false # Using YAJL for pretty-printing...
 ###############################################################################
 # Data Pipeline Tools
 ###############################################################################
-gem 'plist',    require: false
+gem 'plist',      require: false
 gem 'osx-plist',  require: false
 # See this for info relevant to parsing binary plists natively:
 # https://gist.github.com/303378
 
 # Syncing Contacts:
-gem 'contacts', require: false
+gem 'contacts',   require: false
 #   https://github.com/mislav/contacts
 #   https://github.com/pengwynn/linkedin
 
@@ -39,8 +39,8 @@ gem 'contacts', require: false
 #   https://github.com/weppos/www-delicious (We're not dealing with "bundles" right now!)
 #   https://rubygems.org/gems/delicious-cli
 #   https://github.com/29decibel/readit
-gem 'mirrored', require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
-gem 'pinboard', require: false
+gem 'mirrored',   require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
+gem 'pinboard',   require: false
 
 #   https://github.com/philnash/bitly (Unfold bit.ly links...)
 #   https://rubygems.org/gems/tagometer (Suggest tags...)
