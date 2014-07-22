@@ -1,7 +1,23 @@
 namespace :snapshot do
+  # TODO: Hoist common functionality for managing snapshots.
+  #
+  # TODO: Mechanisms for restoring a snapshot.
+  #
+  # TODO: Divide snapshot info up into directory-per-browser/machine.
+  #
+  # TODO: Mechanisms for grouping related snapshots and diffing them.
+  #
+  # TODO: Mechanism for representing things as a delta stream.
+  # TODO: Cananonicalize + tree diff?
+  #
+  # TODO: Daemon for watching browsers and recording delta stream.
+  #
+  # TODO: More reliable way of getting system name that doesn't get
+  # TODO: commandeered by network changes.
   namespace :push do
     desc "Save information about all presently/previously open Safari windows/tabs to Dropbox."
     task :safari do
+      # TODO: Force Safari to flush to disk, if it's running?
       require 'json'
       require 'pathname'
       require 'osx/plist'
