@@ -34,6 +34,9 @@ GEM
     dm-validations (1.2.0)
       dm-core (~> 1.2.0)
     docile (1.1.5)
+    dotenv (0.11.1)
+      dotenv-deployment (~> 0.0.2)
+    dotenv-deployment (0.0.2)
     equalizer (0.0.9)
     gdata (1.1.1)
     gherkin (2.12.2)
@@ -112,6 +115,7 @@ DEPENDENCIES
   contacts
   cucumber
   dm-validations
+  dotenv
   grit
   kramdown
   mg

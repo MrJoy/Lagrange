@@ -9,6 +9,7 @@ source 'https://rubygems.org'
 ###############################################################################
 gem 'activesupport', require: false
 gem 'clint',         require: false # TODO: Use Thor?
+gem 'dotenv',        require: false
 
 
 ###############################################################################
