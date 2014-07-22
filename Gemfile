@@ -26,6 +26,7 @@ gem 'yajl-ruby',      require: false # Using YAJL for pretty-printing...
 # Data Pipeline Tools
 ###############################################################################
 gem 'plist',    require: false
+gem 'osx-plist',  require: false
 # See this for info relevant to parsing binary plists natively:
 # https://gist.github.com/303378
 

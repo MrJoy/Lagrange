@@ -63,6 +63,7 @@ GEM
     multi_json (1.10.1)
     multi_test (0.1.1)
     multi_xml (0.5.5)
+    osx-plist (1.0.3)
     pinboard (0.1.1)
       httparty (= 0.11.0)
     plist (3.1.0)
@@ -120,6 +121,7 @@ DEPENDENCIES
   kramdown
   mg
   mirrored
+  osx-plist
   pinboard
   plist
   pry
