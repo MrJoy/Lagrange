@@ -1,4 +1,6 @@
 namespace :snapshot do
+  # TODO: Snapshotting of SublimeText state?
+  #
   # TODO: Hoist common functionality for managing snapshots.
   #
   # TODO: Mechanisms for restoring a snapshot.
