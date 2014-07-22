@@ -131,14 +131,16 @@ namespace :snapshot do
         new('~/Dropbox/Lagrange/Browsers/Sessions').
         expand_path
 
+      result = JSON.pretty_generate({
+        browser:        'chrome',
+        hostname:       `hostname -s`.chomp,
+        snapshotted_at: ts.strftime("%Y-%m-%d %H:%M:%S %Z"),
+        windows:        window_data,
+      })
+
       FileUtils.mkdir_p(sessions_dir)
       File.open(sessions_dir + ts.strftime("%Y%m%d%H%M%S.json"), "w") do |fh|
-        fh.write(JSON.pretty_generate({
-          browser:        'chrome',
-          hostname:       `hostname -s`.chomp,
-          snapshotted_at: ts.strftime("%Y-%m-%d %H:%M:%S %Z"),
-          windows:        window_data,
-        }))
+        fh.write(result)
       end
     end
   end
