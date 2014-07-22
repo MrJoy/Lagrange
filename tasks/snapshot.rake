@@ -1,6 +1,6 @@
 namespace :snapshot do
   namespace :push do
-    desc "Save information about all presently open Chrome windows/tabs."
+    desc "Save information about all presently open Chrome windows/tabs to Dropbox."
     task :chrome do
       require 'json'
       require 'pathname'
