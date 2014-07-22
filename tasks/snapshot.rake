@@ -83,6 +83,8 @@ namespace :snapshot do
         map { |(_,id,_)| id }. # ... only care about title.
         map(&:to_i) # ... types are nice.
 
+      # TODO: Include info about selected window, and selected tab per window.
+      # TODO: Include info about minimized windows.
       window_data = []
       windows.each do |window_id|
         urls = Hash[
