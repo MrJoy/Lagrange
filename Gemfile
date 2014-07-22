@@ -1,4 +1,8 @@
-source :gemcutter
+ruby '2.1.2'
+#ruby=ruby-2.1.2
+#ruby-gemset=lagrange
+
+source 'https://rubygems.org'
 
 ###############################################################################
 # General Tools
