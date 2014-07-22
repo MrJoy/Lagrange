@@ -2,6 +2,13 @@
 
 Nothing to see yet, move along.
 
+## Requirements
+
+From Homebrew, install:
+
+* `chrome-cli`
+
+
 ## Running Tests
 
 To run the tests, simply run:
