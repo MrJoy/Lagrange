@@ -48,8 +48,8 @@ gem 'pinboard', require: false
 ###############################################################################
 # Development Infrastructure
 ###############################################################################
-gem 'rake',           groups: [:development],        require: false
-gem 'mg',             groups: [:development],        require: false
+gem 'rake',           groups: [:development],       require: false
+gem 'mg',             groups: [:development],       require: false
 gem 'yard',           groups: [:development],       require: false, platform: :mri_19
 gem 'yard-cucumber',  groups: [:development],       require: false, platform: :mri_19
 gem 'kramdown',       groups: [:development],       require: false, platform: :mri_19
