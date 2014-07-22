@@ -8,7 +8,7 @@ source 'https://rubygems.org'
 # General Tools
 ###############################################################################
 gem 'activesupport', require: false
-gem 'clint',         require: false
+gem 'clint',         require: false # TODO: Use Thor?
 
 
 ###############################################################################
