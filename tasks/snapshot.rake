@@ -100,7 +100,7 @@ namespace :snapshot do
             map { |(_,id,title)| [id.to_i, title.chomp] }
         ]
 
-        window = {
+        window_data << {
           position: Hash[
                       `chrome-cli position -w #{window_id}`.
                         chomp.
@@ -122,8 +122,6 @@ namespace :snapshot do
                       end.
                       sort { |a, b| a[:url] <=> b[:url] }
         }
-
-        window_data << window
       end
 
       # TODO: Sort window_data somehow?
