@@ -15,7 +15,7 @@ gem 'dotenv',        require: false
 ###############################################################################
 # Core Data Model Tools
 ###############################################################################
-gem 'grit',           require: false
+gem 'rugged',         require: false
 gem 'virtus',         require: false
 gem 'dm-validations', require: false
 gem 'addressable',    require: false
@@ -31,7 +31,7 @@ gem 'osx-plist',  require: false
 # https://gist.github.com/303378
 
 # Syncing Contacts:
-gem 'contacts',   require: false
+# gem 'contacts',   require: false
 #   https://github.com/mislav/contacts
 #   https://github.com/pengwynn/linkedin
 
