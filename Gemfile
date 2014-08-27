@@ -52,7 +52,6 @@ gem 'pinboard',   require: false
 ###############################################################################
 gem 'rake',           groups: [:development],       require: false
 gem 'yard',           groups: [:development],       require: false
-gem 'yard-cucumber',  groups: [:development],       require: false
 gem 'kramdown',       groups: [:development],       require: false
 gem 'pry',            groups: [:development, :test]
 
