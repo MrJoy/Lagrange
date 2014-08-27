@@ -12,4 +12,4 @@ namespace :test do
   end
 end
 
-CLOBBER.include('coverage')
+# CLOBBER.include('coverage')

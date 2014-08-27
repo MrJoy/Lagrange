@@ -4,5 +4,5 @@ YARD::Rake::YardocTask.new do |t|
   # t.options = ['--any', '--extra', '--opts'] # optional
 end
 
-CLOBBER.include(".yardoc")
-CLOBBER.include("doc")
+# CLOBBER.include(".yardoc")
+# CLOBBER.include("doc")
