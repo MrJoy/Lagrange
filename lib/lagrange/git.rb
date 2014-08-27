@@ -1,3 +1,4 @@
+# TODO: Switch to Rugged
 module Lagrange
   module Git
     def self.versions(file)

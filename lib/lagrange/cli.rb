@@ -1,3 +1,4 @@
+# TODO: Switch to Thor.
 require 'clint'
 
 module Lagrange

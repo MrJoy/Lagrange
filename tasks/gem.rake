@@ -2,6 +2,7 @@ PROJECT_NAME='lagrange'
 GEMSPEC="#{PROJECT_NAME}.gemspec"
 
 task :sanity_check do
+  # TODO: Switch to Rugged...
   pending_changes = `git status --porcelain --untracked-files=no`.strip.split("\n").count
   if(pending_changes > 0)
     raise "Refusing to build gem -- your working copy is dirty!  Please commit changes to ensure your gem doesn't include stuff that may get lost!"
@@ -9,6 +10,7 @@ task :sanity_check do
 end
 task :gem => :sanity_check
 
+# TODO: Ditch mg...
 require 'mg'
 begin
   MG.new(GEMSPEC)
