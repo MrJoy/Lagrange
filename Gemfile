@@ -62,4 +62,3 @@ gem 'pry',            groups: [:development, :test]
 gem 'rspec',              group: [:test],         require: false
 gem 'simplecov',          group: [:test],         require: false
 gem 'cucumber',           group: [:test],         require: false
-gem 'transpec',           group: [:development],  require: false
