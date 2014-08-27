@@ -2,14 +2,14 @@ describe Lagrange::Models::AutoVivifyingOpenStruct do
   def recursively_check(avos)
     table = avos.instance_variable_get(:'@table')
     table.each do |key, value|
-      key.should be_a Symbol
-      value.should_not be_a Hash
+      expect(key).to be_a Symbol
+      expect(value).not_to be_a Hash
       if(value.is_a?(Lagrange::Models::AutoVivifyingOpenStruct))
         recursively_check(value)
       elsif(value.is_a?(Fixnum))
-        value.should eq 123
+        expect(value).to eq 123
       elsif(value.is_a?(String))
-        value.should eq "something"
+        expect(value).to eq "something"
       end
     end
   end
@@ -75,8 +75,8 @@ describe Lagrange::Models::AutoVivifyingOpenStruct do
       s.foo.merge!({ bar: { meh: 123 }})
 
       recursively_check(s)
-      s.foo.bar.baz.blah.should eq 123
-      s.foo.bar.meh.should eq 123
+      expect(s.foo.bar.baz.blah).to eq 123
+      expect(s.foo.bar.meh).to eq 123
     end
 
   end
@@ -85,15 +85,15 @@ describe Lagrange::Models::AutoVivifyingOpenStruct do
     it "should convert the entire hierarchy into a simple hash" do
       s = Lagrange::Models::AutoVivifyingOpenStruct.new(foo: { bar: { baz: { blah: 123 }}}).as_json
 
-      s.should be_a(Hash)
-      s.keys.should == [:foo]
-      s[:foo].should be_a(Hash)
-      s[:foo].keys.should == [:bar]
-      s[:foo][:bar].should be_a(Hash)
-      s[:foo][:bar].keys.should == [:baz]
-      s[:foo][:bar][:baz].should be_a(Hash)
-      s[:foo][:bar][:baz].keys.should == [:blah]
-      s[:foo][:bar][:baz][:blah].should eq 123
+      expect(s).to be_a(Hash)
+      expect(s.keys).to eq([:foo])
+      expect(s[:foo]).to be_a(Hash)
+      expect(s[:foo].keys).to eq([:bar])
+      expect(s[:foo][:bar]).to be_a(Hash)
+      expect(s[:foo][:bar].keys).to eq([:baz])
+      expect(s[:foo][:bar][:baz]).to be_a(Hash)
+      expect(s[:foo][:bar][:baz].keys).to eq([:blah])
+      expect(s[:foo][:bar][:baz][:blah]).to eq 123
     end
   end
 end

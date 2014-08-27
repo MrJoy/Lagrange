@@ -6,16 +6,16 @@ describe Lagrange::Models::URL do
       end
 
       it "should exist" do
-        @url.should_not be_nil
+        expect(@url).not_to be_nil
       end
 
       it "should not be valid" do
-        @url.valid?.should eq false
+        expect(@url.valid?).to eq false
       end
 
       it "should have created/updated at timestamps" do
-        @url.created_at.should_not be_nil
-        @url.updated_at.should_not be_nil
+        expect(@url.created_at).not_to be_nil
+        expect(@url.updated_at).not_to be_nil
       end
 
       # TODO: In test mode, don't read from the real repository -- use a dummy
@@ -27,10 +27,10 @@ describe Lagrange::Models::URL do
       it "should allow assignment of raw_url, which should create uuid, etc" do
         @url.raw_url = RAW_URL
 
-        @url.raw_url.should eq RAW_URL
-        @url.canonical_url.should eq CANONICAL_URL
-        @url.cleansed_url.should eq CLEANSED_URL
-        @url.uuid.should eq UUID
+        expect(@url.raw_url).to eq RAW_URL
+        expect(@url.canonical_url).to eq CANONICAL_URL
+        expect(@url.cleansed_url).to eq CLEANSED_URL
+        expect(@url.uuid).to eq UUID
       end
     end
   end
