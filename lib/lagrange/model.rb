@@ -1,6 +1,6 @@
 module Lagrange
   class Model
-    include Virtus
+    include Virtus.model
     include DataMapper::Validations
 
     def as_json(*args)
