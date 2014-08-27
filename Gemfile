@@ -60,6 +60,7 @@ gem 'pry',            groups: [:development, :test]
 ###############################################################################
 # Test Infrastructure
 ###############################################################################
-gem 'rspec',              group: [:test], require: false
-gem 'simplecov',          group: [:test], require: false
-gem 'cucumber',           group: [:test], require: false
+gem 'rspec',              group: [:test],         require: false
+gem 'simplecov',          group: [:test],         require: false
+gem 'cucumber',           group: [:test],         require: false
+gem 'transpec',           group: [:development],  require: false
