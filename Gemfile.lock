@@ -54,8 +54,6 @@ GEM
     json (1.8.1)
     kramdown (1.4.0)
     method_source (0.8.2)
-    mg (0.0.8)
-      rake
     mime-types (1.25.1)
     minitest (5.4.0)
     mirrored (0.1.6)
@@ -119,7 +117,6 @@ DEPENDENCIES
   dotenv
   grit
   kramdown
-  mg
   mirrored
   osx-plist
   pinboard
