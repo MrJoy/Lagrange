@@ -134,7 +134,7 @@ module Lagrange
     def process_help_messages
       msgs = self.help_messages.map do |line|
         if(line.is_a?(Array))
-          [line.first.ensure_array.join(", "), line.last.ensure_array]
+          [Array(line.first).join(", "), Array(line.last)]
         else
           line
         end
