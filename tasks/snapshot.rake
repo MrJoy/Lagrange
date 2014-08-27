@@ -1,3 +1,4 @@
+# TODO: Hoist to proper codebase...
 namespace :snapshot do
   # TODO: Snapshotting of SublimeText state?
   #
