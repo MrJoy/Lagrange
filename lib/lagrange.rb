@@ -105,7 +105,7 @@ module Lagrange
     unless(File.directory?(repo.absolute))
       self.logger.info("Creating repository at: #{repo.short}")
       FileUtils.mkdir_p(repo.absolute) || raise("Couldn't create data directory in #{repo.short}!")
-      # TODO: Use grit!
+      # TODO: Use rugged!
       self.logger.info("Initializing repository...")
       system(%Q{
         cd #{repo.absolute.shellescape}
@@ -161,14 +161,14 @@ module Lagrange
 
   def self.ensure_clean(file)
     if(File.exist?(file.absolute))
-      # TODO: Use grit!
+      # TODO: Use rugged!
       status = `cd #{Lagrange::repository.absolute.shellescape}; git status --porcelain #{file.relative.shellescape}`.chomp.split(/\s+/).first || ""
       raise "Uh oh!  File '#{file.absolute}' is dirty -- please ensure it's clean before trying to import more changes!  Got status code of '#{status}'." if(status != "")
     end
   end
 
   def self.snapshot(file, toolname)
-    # TODO: Use Grit!
+    # TODO: Use rugged!
     self.logger.info("Snapshotting file in repo: #{file.relative}")
     system(%Q{
       cd #{Lagrange::repository.absolute.shellescape} &&
