@@ -7,5 +7,5 @@ When /^we twiddle it$/ do
 end
 
 Then /^it should be happy$/ do
-  @widget.should be_a Hash
+  expect(@widget).to be_a Hash
 end
