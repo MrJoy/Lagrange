@@ -9,7 +9,8 @@ source 'https://rubygems.org'
 ###############################################################################
 gem 'activesupport', require: false
 gem 'clint',         require: false # TODO: Use Thor?
-gem 'dotenv',        require: false
+gem 'dotenv',        require: false # TODO: Ideal way to allow users to use this?
+
 
 
 ###############################################################################
@@ -22,30 +23,87 @@ gem 'addressable',    require: false
 gem 'yajl-ruby',      require: false # Using YAJL for pretty-printing...
 
 
+
 ###############################################################################
 # Data Pipeline Tools
 ###############################################################################
+
+## File-type Detection / Parsing
+#
+# * http://rubygems.org/gems/file_classify
+# * [Native parsing of binary plists](https://gist.github.com/303378)
 gem 'plist',      require: false
 gem 'osx-plist',  require: false
-# See this for info relevant to parsing binary plists natively:
-# https://gist.github.com/303378
 
-# Syncing Contacts:
-# gem 'contacts',   require: false
-#   https://github.com/mislav/contacts
-#   https://github.com/pengwynn/linkedin
+## Contacts
+#
+# * https://github.com/cardmagic/contacts -- Note, github is WAY newer than release!
+#     * AOL
+#     * Hotmail
+#     * Yahoo
+#     * Gmail
+#     * Mail.ru
+#     * Plaxo
+# * https://github.com/mislav/contacts
+#     * Flickr
+#     * Google
+#     * Windows Live!
+#     * Yahoo
+# * https://github.com/hexgnu/linkedin
+#     * LinkedIn
+# * https://github.com/bobbrez/linkedin2
+#     * LinkedIn
+# * TODO: Find handlers for the following services/apps...
+#     * AngelList
+#     * InstaGram
+#     * Twitter
+#     * Facebook
+#     * FourSquare
+#     * iCloud
+#     * FullContact
+#     * Skype
+#     * Adium
 
-# Syncing Links:
-#   https://github.com/weppos/www-delicious (We're not dealing with "bundles" right now!)
-#   https://rubygems.org/gems/delicious-cli
-#   https://github.com/29decibel/readit
-gem 'mirrored',       require: false # ... Magnolia is dead, but pinboard uses Mirror'd ...
-gem 'pinboard',       require: false
+
+## Links/Bookmarks
+
+### Browser Bookmarks
+#
+# * [Safari](http://rubygems.org/gems/safari_plist)
+# * [Firefox](https://github.com/lkdjiin/bookmarks)
+# * [Chrome](http://rubygems.org/gems/bookmarkeron)
+
+### Bookmark Services
+# * [Readability](https://github.com/29decibel/readit)
+# * [Delicious](https://rubygems.org/gems/delicious) -- Use this one!
+# * [Delicious - CLI](https://rubygems.org/gems/delicious-cli)
+# * [Delicious - Console Recorder](https://rubygems.org/gems/delicious-console)
+# * [Pinboard - CLI](https://rubygems.org/gems/pinboard-cli)
+gem 'mirrored',       require: false # TODO: Replace with `delicious` gem!
+gem 'pinboard',       require: false # TODO: Upstream has un-released fixes in git: https://github.com/ryw/pinboard/
 gem 'pinboard_tools', require: false
 
-#   https://github.com/philnash/bitly (Unfold bit.ly links...)
-#   https://rubygems.org/gems/tagometer (Suggest tags...)
-#   http://citizen428.github.com/unsavory/ (Finding stale links...)
+### Tagging/Classification
+#
+# * [uClassify](http://www.uclassify.com/browse/uClassify/Topics) -- [gem](http://rubygems.org/gems/uclassify)
+# * https://rubygems.org/gems/tagometer
+
+### URL Canonicalization / Cleansing / Short-Link Expansion
+#
+# * [Unfold Bit.ly Links](https://github.com/philnash/bitly)
+# * http://citizen428.github.com/unsavory/
+
+### Snapshotting
+#
+# * https://github.com/TransparencyToolkit/Archiver
+
+## Other Data
+#
+# * [LinkedIn - Profile](https://github.com/yatish27/linkedin-scraper)
+# * [LinkedIn - Profile](https://github.com/transparencytoolkit/linkedindata)
+# * [LinkedIn - Resume](https://github.com/mefellows/linkedin2cv)
+# * [Correlate Name to Email](https://github.com/TransparencyToolkit/NameToEmail)
+
 
 
 ###############################################################################
