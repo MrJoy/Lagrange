@@ -87,3 +87,29 @@ uri.to_s
 * http://www.nytimes.com/2011/06/06/opinion/06diamond.html?_r=2
 
 * http://forum.unity3d.com//viewtopic.php?t=10147
+
+
+
+
+
+
+## Pip Packages
+
+git-fat                   - Manage large binary files with git
+git-bigstore              - Track big files with Git.
+homekeeper                - Homekeeper can version your dotfiles with Git.
+pypeople                  - Commandline vCard editor in Python, with git syncing
+gistore                   - Backup system using DVCS backend, such as git
+git-remote-couch          - a git-remote-helper that allows you to push source code into a CouchDB
+git-bigfile               - git-bigfile allows you to use Git with large files without storing the file in Git itself
+GitSync                   - Use git to sync a project directory on an OS X client with a remote server.
+moredots                  - Managing dotfiles with Git and grace
+humble                    - Shows stats on a given GitHub user.
+logit                     - Sometimes you just need to write something down, so logit.
+prefsync                  - A little tool to help synchronize Mac OS X plist files
+groundstation             - A decentralised git syncronisation engine
+github_list_issues        - List all issues assigned to the user on GitHub
+gitcls                    - Python wrapper for Mac OS defaults command
+homeslice                 - Home directory / dotfile / rcfile management with git.
+Githubarium               - The organization service for starred repositories in GitHub
+

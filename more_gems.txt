@@ -1,0 +1,4 @@
+http://rubygems.org/gems/icloud
+http://rubygems.org/gems/icloud-reader
+https://github.com/n8vision/caldav-icloud
+http://rubygems.org/gems/rubygamertag
