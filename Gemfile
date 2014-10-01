@@ -37,6 +37,8 @@ gem 'yajl-ruby',      require: false # Using YAJL for pretty-printing...
 gem 'plist',      require: false
 gem 'osx-plist',  require: false
 
+# http://unshorten.link
+
 ## Keychain Access
 #
 # * https://github.com/seattlerb/osx_keychain
