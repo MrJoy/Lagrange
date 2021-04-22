@@ -63,7 +63,7 @@ GEM
       mini_portile (= 0.6.0)
     nokogiri-plist (0.5.0)
       nokogiri
-    oauth (0.4.7)
+    oauth (0.5.6)
     options (2.3.2)
     osx-plist (1.0.3)
     pinboard (0.1.1)
